@@ -1,0 +1,237 @@
+:root {
+  --bg: #000;
+  --accent: #00e6ff;
+  --card-size: min(22vw, 220px);
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  background: var(--bg);
+  color: #fff;
+  font-family: system-ui, Segoe UI, Roboto, sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Particle canvas fills background */
+#particleCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  /*background: 
+    url("img/background.png") no-repeat center center / 100%,
+    radial-gradient(circle at center, #0b0b0d 0%, #010104 100%);*/
+}
+
+header {
+  position: fixed;
+  left: 16px;
+  top: 12px;
+  z-index: 30;
+}
+
+.ambient-toggle, .start-btn, .close-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.grid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  z-index: 5;
+}
+
+.card {
+  width: var(--card-size);
+  height: var(--card-size);
+  padding: 4px;
+  /*background: rgba(0,0,0,0.2);*/
+  border-radius: 12px;
+  overflow: visible;
+  position: relative;
+  cursor: pointer;
+  /*box-shadow: 0 6px 30px rgba(0,0,0,0.6);*/
+  transition: transform 220ms, box-shadow 220ms;
+}
+
+.card:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 15px rgba(0,230,255,0.45));
+}
+
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  transition: transform 0.4s ease, filter 0.4s ease;
+}
+
+.video-modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.85);
+  z-index: 60;
+}
+
+.video-modal.open { display: flex; }
+
+.video-frame {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* prevent centering while video loads */
+  width: min(80vw, 1200px); /* reserve final width immediately */
+  height: auto;
+  /* object-fit: contain; */
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
+  /*position: relative;*/
+  box-shadow: 0 0 40px rgba(0,230,255,0.2);
+}
+
+#player {
+  width: 100%;
+  height: auto;
+  max-height: 70vh;
+  aspect-ratio: auto; /* reserve space so layout doesn't jump */
+  background: #000;     /* black placeholder while hidden */
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  transition: opacity 0.4s;
+  opacity: 1;
+}
+#player.fade-out {
+  opacity: 0;
+}
+
+/* secondary player sits under primary for crossfading audio */
+/* second player removed: using a single <video id="player"> */
+
+/* spinner removed - black screen will appear between videos */
+
+/* Background / blob visual tweak values (edit these to adjust behavior):
+   --blob-count: number of blobs (default 6)
+   --blob-base-radius: base radius of blobs (px, default 30)
+   --blob-movement-scale: how far blobs move with time (px, default 60)
+   --blob-opacity-base: starting opacity for center (0..1, default 0.06)
+   --background-glow-strength: background gradient opacity (0..1, default 0.06)
+*/
+
+.fade-overlay {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  animation: fadeIn 0.4s forwards;
+  z-index: 200;
+}
+.fade-overlay.fade-out {
+  animation: fadeOut 0.4s forwards;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+
+/* ---- video info section ---- */
+.video-info {
+  position: relative;
+  /* bottom: 0;
+  left: 0; */
+  width: 100%;
+  height: auto; /* don't stretch to full frame height */
+  background: rgba(0,0,0,0.55);
+  color: white;
+  text-align: left;
+  padding: 16px 20px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.video-info h2 {
+  margin: 0 0 4px;
+  font-size: 18px;
+}
+
+.tag-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.tag {
+  background: rgba(0,230,255,0.15);
+  border: 1px solid rgba(0,230,255,0.3);
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.2s;
+}
+
+.tag:hover {
+  background: rgba(0,230,255,0.35);
+}
+
+/* ---- noisy lowres background overlay ---- */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  /*background: url("./img/background.png") repeat;*/
+  opacity: 0.15;
+  z-index: 1;
+  mix-blend-mode: overlay;
+  image-rendering: pixelated;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: none;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  font-size: 18px;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  z-index: 80;
+}
+
+.start-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.85);
+  z-index: 50;
+  text-align: center;
+}
+
+/* responsive gallery spacing */
+.grid { padding: 24px; }
+
+/* interactive area around cards for closing modal */
+.video-modal { align-items: center; justify-content: center; }
+.video-modal .video-frame { z-index: 210; }
