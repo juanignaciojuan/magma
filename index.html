@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Magma 2025</title>
+    <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Moving pixel dust background -->
+    <canvas id="particleCanvas"></canvas>
+
+    <header>
+        <button id="toggleAmbient" class="ambient-toggle">♫</button>
+        <button id="reshuffleBtn" class="ambient-toggle" title="Reshuffle gallery">↻</button>
+    </header>
+
+    <main>
+        <div class="grid" id="gallery"></div>
+    </main>
+
+    <div class="video-modal" id="videoModal">
+        <div class="video-frame">
+            <button class="close-btn" id="closeVideo">X</button>
+            <video id="player" controls playsinline preload="metadata" loop></video>
+            <!-- black screen will be shown between loads; only one video element is used -->
+
+            <!-- New project info section -->
+            <div class="video-info">
+                <h2 id="videoTitle"></h2>
+                <p id="videoDesc"></p>
+                <div id="videoTags" class="tag-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="start-overlay" id="startOverlay">
+        <h2>Muestra Magma 2025</h2>
+        <p>Estación de Consulta</p>
+        <button id="startBtn" class="start-btn">Entrar</button>
+    </div>
+
+    <footer></footer>
+
+    <script src="data.js?v=20251022"></script>
+    <script src="script.js?v=20251022"></script>
+</body>
+
+</html>
