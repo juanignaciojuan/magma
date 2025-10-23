@@ -25,10 +25,10 @@
     <div class="video-modal" id="videoModal">
         <div class="video-frame">
             <button class="close-btn" id="closeVideo">X</button>
-            <video id="player" controls playsinline preload="metadata" loop></video>
+            <video id="player" controls playsinline preload="metadata" loop disablePictureInPicture controlsList="nodownload noremoteplayback"></video>
             <!-- black screen will be shown between loads; only one video element is used -->
 
-            <!-- New project info section -->
+            <!-- Project info section -->
             <div class="video-info">
                 <h2 id="videoTitle"></h2>
                 <p id="videoDesc"></p>
@@ -45,8 +45,8 @@
 
     <footer></footer>
 
-    <script src="data.js?v=20251022"></script>
-    <script src="script.js?v=20251022"></script>
+    <script src="data.js"></script>
+    <script src="script.js"></script>
 </body>
 
 </html>

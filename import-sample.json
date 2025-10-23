@@ -1,0 +1,18 @@
+[
+  {
+    "img": "img/thumb1.png",
+    "video": "videos/clip1.mp4",
+    "volume": 0.9,
+    "title": "Proyecto ejemplo 1",
+    "desc": "Breve descripción 1",
+    "tags": ["color","sonido"]
+  },
+  {
+    "img": "img/thumb2.png",
+    "video": "videos/clip2.mp4",
+    "volume": 0.7,
+    "title": "Proyecto ejemplo 2",
+    "desc": "Breve descripción 2",
+    "tags": ["narrativa","instalacion"]
+  }
+]
