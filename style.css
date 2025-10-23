@@ -26,7 +26,8 @@ body {
   justify-content: center;
   align-items: center;
   text-align: center;
-  overflow: hidden;
+  /* Allow page scrolling/touch on mobile devices */
+  overflow: auto;
   /* Hide stray text caret that can appear after modal interactions */
   caret-color: transparent;
 }
@@ -49,6 +50,12 @@ header {
   left: 16px;
   top: 12px;
   z-index: 30;
+}
+
+/* Reserve space at top so header buttons don't overlap the grid cards
+   The grid itself is padded from the top to ensure cards start below header. */
+.grid {
+  padding-top: 64px; /* enough to clear header + some breathing room */
 }
 
 .ambient-toggle,
