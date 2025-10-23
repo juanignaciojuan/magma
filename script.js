@@ -8,17 +8,23 @@ const startOverlay = document.getElementById('startOverlay');
 const canvas = document.getElementById('particleCanvas');
 const ctx = canvas.getContext('2d');
 const gallery = document.getElementById('gallery');
-// Using a single video player (`player`) — avoid dual-player logic entirely.
 
 /* ---------- AUDIO ---------- */
+// Global volumes you can tweak (see also CSS variables for card sizes)
+const SETTINGS = {
+    ambientVol: 1,  // ambient soundtrack default volume when ON
+    hoverVol: 0.5,    // UI hover sound volume
+    clickVol: 0.5,    // UI click sound volume
+    videoVol: 0.5     // default video volume if a clip doesn't specify one
+};
 const ambient = new Audio("audio/ambient.mp3");
 ambient.loop = true;
-ambient.volume = 0.25;
+ambient.volume = SETTINGS.ambientVol;
 
 const hoverSound = new Audio("audio/hover.mp3");
-hoverSound.volume = 0.5;
+hoverSound.volume = SETTINGS.hoverVol;
 const clickSound = new Audio("audio/click.mp3");
-clickSound.volume = 0.5;
+clickSound.volume = SETTINGS.clickVol;
 
 // For mobile autoplay policies: create an AudioContext to unlock audio on first gesture
 let audioCtx = null;
@@ -53,7 +59,7 @@ function fadeAmbient(toVol, duration = 600) {
 }
 
 toggleAmbient.addEventListener('click', () => {
-    fadeAmbient(ambientOn ? 0 : 0.25, 500);
+    fadeAmbient(ambientOn ? 0 : SETTINGS.ambientVol, 600);
     ambientOn = !ambientOn;
 });
 
@@ -75,6 +81,7 @@ startBtn.addEventListener('click', () => {
     ensureAudioContext();
     if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
     if (ambient.paused) ambient.play().catch(() => {});
+    ambient.volume = SETTINGS.ambientVol;
     ambientOn = true;
     toggleAmbient.textContent = '♫';
     startOverlay.style.display = 'none';
@@ -88,7 +95,7 @@ function unlockAudioOnFirstGesture() {
 }
 document.addEventListener('pointerdown', unlockAudioOnFirstGesture);
 
-/* ---------- PARTICLE BACKGROUND ---------- */
+/* ---------- BACKGROUND CANVAS (Film-grain) ---------- */
 function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -96,11 +103,14 @@ function resizeCanvas() {
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
-let t = 0, mouseX = 0, mouseY = 0;
+let t = 0;
+// Particle background disabled; using film-grain instead.
+// let mouseX = 0; let mouseY = 0;
+
 // Grain animation state
 let grains = [];
 
-// Config - tweak these values to change visual/audio behaviour
+// Config - tweak these values to change visual behaviour
 const CONFIG = {
     blobCount: 4,                // number of blobs (was 6)
     blobBaseRadius: 30,          // base radius for blobs (px)
@@ -118,20 +128,14 @@ function noise(x, y) {
     return (Math.sin(x * 12.9898 + y * 78.233) * 43758.5453) % 1;
 }
 
-// Replace the previous interactive noise with a simple film-grain animation
-// that does not react to the mouse. This simulates an old cinema grain.
-// Grain parameters are in CONFIG (below added if not present).
-// We'll generate a set of grains on resize and animate them with a subtle vertical
-// drift and flicker.
-
 // extend CONFIG with grain params (safe-guard: only add if absent)
 if (typeof CONFIG.grainCount === 'undefined') {
     Object.assign(CONFIG, {
-        grainCount: 1200,      // number of grain dots (more visible)
-        grainSizeMin: 1,       // min size in px
-        grainSizeMax: 3,       // max size in px (slightly bigger)
-        grainSpeed: 0.04,      // vertical speed multiplier
-        grainOpacity: 0.10,    // base alpha for grains (more visible)
+        grainCount: 1600,   // number of grain dots (more visible)
+        grainSizeMin: 1,    // min size in px
+        grainSizeMax: 2,    // max size in px
+        grainSpeed: 0.06,   // vertical speed multiplier
+        grainOpacity: 0.18, // base alpha for grains (visible)
         backgroundImage: null  // optional background image path (null = plain dark)
     });
 }
@@ -157,24 +161,14 @@ function drawNoise() {
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, w, h);
 
-    // optional background image (if provided and cached)
-    if (CONFIG.backgroundImage) {
-        // draw as subtle background if image exists
-        try {
-            const img = document.getElementById('bgImgRef');
-            if (img && img.complete) ctx.drawImage(img, 0, 0, w, h);
-        } catch (e) {}
-    }
-
     // draw grains
-    ctx.beginPath();
     for (let i = 0; i < grains.length; i++) {
         const g = grains[i];
         // vertical drift
         const yy = (g.y + t * g.speed * 60) % h;
-        const flick = 0.6 + 0.4 * Math.sin((t + i) * 6 + (i % 7));
+        const flick = 0.5 + 0.5 * Math.sin((t + i) * 4 + (i % 7));
         const a = Math.max(0, Math.min(1, g.alpha * flick));
-        ctx.fillStyle = `rgba(220,220,220,${a})`;
+        ctx.fillStyle = `rgba(230,230,230,${a})`;
         // draw small rectangle as grain
         ctx.fillRect(Math.floor(g.x), Math.floor(yy), Math.ceil(g.r), Math.ceil(g.r));
     }
@@ -183,14 +177,13 @@ function drawNoise() {
     ctx.fillStyle = `rgba(255,255,255,${CONFIG.backgroundGlow * 0.02})`;
     ctx.fillRect(0, 0, w, h);
 
-    t += 0.6;
+    t += 0.5;
     requestAnimationFrame(drawNoise);
 }
 
 window.addEventListener('resize', () => { generateGrains(); });
 generateGrains();
 drawNoise();
-
 /* ---------- CARD GENERATION ---------- */
 // Shuffle projects each load so card order is random (Fisher-Yates)
 function shuffleArray(arr) {
@@ -206,21 +199,38 @@ function buildGallery() {
     // clear existing
     gallery.innerHTML = '';
     const shuffledProjects = shuffleArray(projects);
+    const frag = document.createDocumentFragment();
     shuffledProjects.forEach(p => {
-        const card = document.createElement("div");
-        card.className = "card";
+        const card = document.createElement('div');
+        card.className = 'card';
         card.dataset.video = p.video;
         card.dataset.volume = (p.volume != null ? p.volume : 1);
         card.dataset.title = p.title;
         card.dataset.desc = p.desc;
         card.dataset.tags = JSON.stringify(p.tags);
-        card.innerHTML = `<img src="${p.img}" draggable="false">`;
-        gallery.appendChild(card);
+
+    // Create thumbnail image lazily and keep markup minimal
+        const img = document.createElement('img');
+    // Set a transparent placeholder src to avoid broken image icons in some browsers
+    img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+    img.dataset.src = p.img; // actual src will be applied when observed
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        img.alt = p.title || 'project';
+        img.draggable = false;
+        img.className = 'thumb';
+        card.appendChild(img);
+        frag.appendChild(card);
     });
+    // append fragment for better performance when many cards
+    gallery.appendChild(frag);
 
     // Add interactions after cards are created
+    const HOVER_CAPABLE = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
     gallery.querySelectorAll('.card').forEach(card => {
-        card.addEventListener('mouseenter', () => playSound(hoverSound));
+        if (HOVER_CAPABLE) {
+            card.addEventListener('mouseenter', () => playSound(hoverSound));
+        }
         card.addEventListener('click', () => {
             playSound(clickSound);
             openVideo(card);
@@ -231,9 +241,41 @@ function buildGallery() {
 // build initially
 buildGallery();
 
+// Lazy-load thumbnails and pre-measure video aspect ratios when thumbnails enter view
+const thumbObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const img = entry.target;
+        // Apply the real image source and reveal only after it loads
+        const realSrc = img.dataset.src;
+        if (realSrc) {
+            // add load/error handlers to control visibility
+            img.addEventListener('load', () => {
+                img.classList.add('loaded'); // CSS will fade it in
+            }, { once: true });
+            img.addEventListener('error', () => {
+                // Keep black; do not swap to an error graphic
+                img.classList.remove('loaded');
+            }, { once: true });
+            img.src = realSrc;
+        }
+
+        // Do not change card aspect ratio; cards remain square
+
+        thumbObserver.unobserve(img);
+    });
+}, { rootMargin: '200px' });
+
+// observe all thumbs
+document.querySelectorAll('.thumb').forEach(i => thumbObserver.observe(i));
+
 // reshuffle button
 const reshuffleBtn = document.getElementById('reshuffleBtn');
-if (reshuffleBtn) reshuffleBtn.addEventListener('click', () => buildGallery());
+if (reshuffleBtn) reshuffleBtn.addEventListener('click', () => {
+    buildGallery();
+    // Re-observe all new thumbnails so they load and aspect ratios are measured
+    document.querySelectorAll('.thumb').forEach(i => thumbObserver.observe(i));
+});
 
 /* ---------- VIDEO MODAL ---------- */
 function openVideo(card) {
@@ -269,10 +311,20 @@ function openVideo(card) {
     player.src = newSrc;
     try { player.load(); } catch (e) {}
 
+    // Ensure player has the correct per-clip volume and basic controls
+    try {
+        const vol = getClipVolume(card);
+        player.volume = vol;
+        player.muted = false;
+        // keep controls minimal (already set in HTML) but ensure PiP disabled programmatically
+        try { player.disablePictureInPicture = true; } catch (e) {}
+    } catch (e) {}
+
     const revealAndPlay = () => {
         if (!videoModal.classList.contains('open')) return; // closed meanwhile
         // Fade out ambient when actual playback begins
-        player.addEventListener('playing', () => { if (ambientOn) fadeAmbient(0, 300); }, { once: true });
+    // Always fade ambient out when playback actually begins (no-op if already at 0)
+    player.addEventListener('playing', () => { fadeAmbient(0, 300); }, { once: true });
         try { player.currentTime = 0; } catch (_) {}
         player.style.visibility = '';
         player.classList.remove('fade-out');
@@ -312,8 +364,8 @@ function openVideo(card) {
     const fallbackTimer = setTimeout(markAndReveal, 3000);
 
     // Apply per-clip volume before reveal/play
-    const vol = Math.max(0, Math.min(1, parseFloat(card.dataset.volume || '1')));
-    player.volume = isNaN(vol) ? 1 : vol;
+    const vol = getClipVolume(card);
+    player.volume = vol;
 }
 
 function closeModal() {
@@ -330,7 +382,7 @@ function closeModal() {
     if (ambientOn) {
         ensureAudioContext();
         if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
-        fadeAmbient(0.25, 400);
+        fadeAmbient(SETTINGS.ambientVol, 400);
     }
 }
 
@@ -370,3 +422,14 @@ videoModal.addEventListener('click', (e) => {
 
 // Ensure videos loop (guard in case of partial DOM)
 if (player) player.loop = true;
+
+/* ---------- AUDIO UTILITIES ---------- */
+function clamp01(x) { return Math.max(0, Math.min(1, x)); }
+function getClipVolume(card) {
+    // SETTINGS has priority: if global videoVol is 0, force silence regardless of per-clip
+    if (SETTINGS.videoVol === 0) return 0;
+    const clip = parseFloat(card?.dataset?.volume ?? '');
+    const hasClip = !Number.isNaN(clip);
+    const base = hasClip ? clip : SETTINGS.videoVol;
+    return clamp01(base);
+}

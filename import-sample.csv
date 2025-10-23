@@ -1,0 +1,3 @@
+img,video,volume,title,desc,tags
+img/thumb1.png,videos/clip1.mp4,0.9,"Proyecto ejemplo 1","Breve descripción 1","color;sonido"
+img/thumb2.png,videos/clip2.mp4,0.7,"Proyecto ejemplo 2","Breve descripción 2","narrativa;instalacion"

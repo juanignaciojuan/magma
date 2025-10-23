@@ -1,10 +1,21 @@
 :root {
+  /* THEME */
   --bg: #000;
   --accent: #00e6ff;
-  --card-size: min(22vw, 220px);
+
+  /* GALLERY LAYOUT (help)
+     - Use the column variables to control how many cards per row at each size.
+     - Change the breakpoints below if your screens differ.
+     - --grid-gap controls spacing between cards.
+  */
+  --cols-mobile: 2;   /* phones: min resolution */
+  --cols-tablet: 4;   /* tablets */
+  --cols-desktop: 8;  /* large screens: max */
+  --grid-gap: 16px;   /* space between cards */
 }
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   background: var(--bg);
@@ -16,6 +27,8 @@ html, body {
   align-items: center;
   text-align: center;
   overflow: hidden;
+  /* Hide stray text caret that can appear after modal interactions */
+  caret-color: transparent;
 }
 
 /* Particle canvas fills background */
@@ -38,9 +51,11 @@ header {
   z-index: 30;
 }
 
-.ambient-toggle, .start-btn, .close-btn {
+.ambient-toggle,
+.start-btn,
+.close-btn {
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   color: #fff;
   padding: 10px 16px;
   border-radius: 8px;
@@ -48,38 +63,52 @@ header {
 }
 
 .grid {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 40px;
-  flex-wrap: wrap;
+  /* Grid/Flex help: we use CSS Grid for a strict number of columns per breakpoint.
+     Adjust --cols-* above to change counts; tweak breakpoints below as needed. */
+  display: grid;
+  grid-template-columns: repeat(var(--cols-desktop), 1fr);
+  gap: var(--grid-gap);
+  align-items: start;
+  width: 100%;
+  padding: 24px;
+  box-sizing: border-box;
   z-index: 5;
+  max-width: 1600px; /* center the grid on large screens */
+  margin: 0 auto;
 }
 
 .card {
-  width: var(--card-size);
-  height: var(--card-size);
-  padding: 4px;
-  /*background: rgba(0,0,0,0.2);*/
+  width: 100%;
+  padding: 0; /* no inner gap; image fills card */
   border-radius: 12px;
-  overflow: visible;
+  overflow: hidden;
   position: relative;
   cursor: pointer;
-  /*box-shadow: 0 6px 30px rgba(0,0,0,0.6);*/
   transition: transform 220ms, box-shadow 220ms;
+  background: #000; /* black background until media loads */
+  aspect-ratio: 1 / 1; /* keep square cards */
 }
 
 .card:hover {
   transform: scale(1.05);
-  filter: drop-shadow(0 0 15px rgba(0,230,255,0.45));
+  filter: drop-shadow(0 0 15px rgba(0, 230, 255, 0.45));
 }
 
 .card img {
   width: 100%;
   height: 100%;
+  /* aspect ratio comes from parent card */
+  display: block;
   object-fit: cover;
-  border-radius: 8px;
-  transition: transform 0.4s ease, filter 0.4s ease;
+  border-radius: 0; /* card provides rounding */
+  background: #000; /* keep black while loading */
+  opacity: 0;       /* hide until the real image has loaded */
+  transition: opacity 0.3s ease, transform 0.4s ease, filter 0.4s ease;
+}
+
+/* Reveal thumbnail only after JS adds .loaded on the <img> load event */
+.card img.loaded {
+  opacity: 1;
 }
 
 .video-modal {
@@ -88,52 +117,47 @@ header {
   display: none;
   align-items: center;
   justify-content: center;
-  background: rgba(0,0,0,0.85);
+  background: rgba(0, 0, 0, 0.85);
   z-index: 60;
 }
 
-.video-modal.open { display: flex; }
+.video-modal.open {
+  display: flex;
+}
 
 .video-frame {
   display: flex;
   flex-direction: column;
-  align-items: stretch; /* prevent centering while video loads */
-  width: min(80vw, 1200px); /* reserve final width immediately */
+  align-items: stretch;
+  /* prevent centering while video loads */
+  width: min(80vw, 1200px);
+  /* reserve final width immediately */
   height: auto;
+  width: auto;
   /* object-fit: contain; */
   background: #000;
   border-radius: 8px;
   overflow: hidden;
   /*position: relative;*/
-  box-shadow: 0 0 40px rgba(0,230,255,0.2);
+  box-shadow: 0 0 40px rgba(0, 230, 255, 0.2);
 }
 
 #player {
   width: 100%;
   height: auto;
   max-height: 70vh;
-  aspect-ratio: auto; /* reserve space so layout doesn't jump */
-  background: #000;     /* black placeholder while hidden */
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  aspect-ratio: auto;
+  /* reserve space so layout doesn't jump */
+  background: #000;
+  /* black placeholder while hidden */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   transition: opacity 0.4s;
   opacity: 1;
 }
+
 #player.fade-out {
   opacity: 0;
 }
-
-/* secondary player sits under primary for crossfading audio */
-/* second player removed: using a single <video id="player"> */
-
-/* spinner removed - black screen will appear between videos */
-
-/* Background / blob visual tweak values (edit these to adjust behavior):
-   --blob-count: number of blobs (default 6)
-   --blob-base-radius: base radius of blobs (px, default 30)
-   --blob-movement-scale: how far blobs move with time (px, default 60)
-   --blob-opacity-base: starting opacity for center (0..1, default 0.06)
-   --background-glow-strength: background gradient opacity (0..1, default 0.06)
-*/
 
 .fade-overlay {
   position: fixed;
@@ -142,11 +166,30 @@ header {
   animation: fadeIn 0.4s forwards;
   z-index: 200;
 }
+
 .fade-overlay.fade-out {
   animation: fadeOut 0.4s forwards;
 }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
 
 /* ---- video info section ---- */
 .video-info {
@@ -154,8 +197,9 @@ header {
   /* bottom: 0;
   left: 0; */
   width: 100%;
-  height: auto; /* don't stretch to full frame height */
-  background: rgba(0,0,0,0.55);
+  height: auto;
+  /* don't stretch to full frame height */
+  background: rgba(0, 0, 0, 0.55);
   color: white;
   text-align: left;
   padding: 16px 20px;
@@ -176,8 +220,8 @@ header {
 }
 
 .tag {
-  background: rgba(0,230,255,0.15);
-  border: 1px solid rgba(0,230,255,0.3);
+  background: rgba(0, 230, 255, 0.15);
+  border: 1px solid rgba(0, 230, 255, 0.3);
   border-radius: 6px;
   padding: 4px 8px;
   cursor: pointer;
@@ -186,7 +230,7 @@ header {
 }
 
 .tag:hover {
-  background: rgba(0,230,255,0.35);
+  background: rgba(0, 230, 255, 0.35);
 }
 
 /* ---- noisy lowres background overlay ---- */
@@ -196,7 +240,7 @@ body::before {
   inset: 0;
   pointer-events: none;
   /*background: url("./img/background.png") repeat;*/
-  opacity: 0.15;
+  opacity: 0.10;
   z-index: 1;
   mix-blend-mode: overlay;
   image-rendering: pixelated;
@@ -207,7 +251,7 @@ body::before {
   top: 10px;
   right: 10px;
   border: none;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.6);
   color: #fff;
   font-size: 18px;
   border-radius: 50%;
@@ -224,7 +268,7 @@ body::before {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(0,0,0,0.85);
+  background: rgba(0, 0, 0, 0.85);
   z-index: 50;
   text-align: center;
 }
@@ -232,6 +276,34 @@ body::before {
 /* responsive gallery spacing */
 .grid { padding: 24px; }
 
+/* MEDIA QUERIES: fixed column counts by device class */
+/* Phones (min resolution): 2 columns */
+@media (max-width: 600px) {
+  .grid { grid-template-columns: repeat(var(--cols-mobile), 1fr); }
+  :root { --grid-gap: 10px; }
+  .video-frame { width: 92vw; }
+  #player { max-height: 60vh; }
+}
+
+/* Tablets: 4 columns */
+@media (min-width: 601px) and (max-width: 1199px) {
+  .grid { grid-template-columns: repeat(var(--cols-tablet), 1fr); }
+  :root { --grid-gap: 14px; }
+  .video-frame { width: 86vw; }
+}
+
+/* Desktops and larger: 8 columns (max) */
+@media (min-width: 1200px) {
+  .grid { grid-template-columns: repeat(var(--cols-desktop), 1fr); }
+  :root { --grid-gap: 16px; }
+}
+
 /* interactive area around cards for closing modal */
-.video-modal { align-items: center; justify-content: center; }
-.video-modal .video-frame { z-index: 210; }
+.video-modal {
+  align-items: center;
+  justify-content: center;
+}
+
+.video-modal .video-frame {
+  z-index: 210;
+}
