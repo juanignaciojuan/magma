@@ -287,7 +287,7 @@ body::before {
 
 /* MEDIA QUERIES: fixed column counts by device class */
 /* Phones (min resolution): 2 columns */
-@media (max-width: 600px) {
+@media (max-width: 481px) {
   .grid { grid-template-columns: repeat(var(--cols-mobile), 1fr); }
   :root { --grid-gap: 10px; }
   .video-frame { width: 92vw; }
@@ -295,14 +295,14 @@ body::before {
 }
 
 /* Tablets: 4 columns */
-@media (min-width: 601px) and (max-width: 1199px) {
+@media (min-width: 481px) and (max-width: 1420px) {
   .grid { grid-template-columns: repeat(var(--cols-tablet), 1fr); }
   :root { --grid-gap: 14px; }
   .video-frame { width: 86vw; }
 }
 
 /* Desktops and larger: 8 columns (max) */
-@media (min-width: 1200px) {
+@media (min-width: 1421px) {
   .grid { grid-template-columns: repeat(var(--cols-desktop), 1fr); }
   :root { --grid-gap: 16px; }
 }
