@@ -38,56 +38,56 @@ const projects = [
     video: "video/video3.mp4",
     volume: 0.5,
     title: "Proyecto 3",
-    desc: "Narrativa experimental",
-    tags: ["narrativa", "sonido"]
+    desc: "Videoarte inmersiva",
+    tags: ["sonido", "vr"]
   },
   {
     img: "img/magma4.png",
     video: "video/video4.mp4",
     volume: 0.5,
     title: "Proyecto 4",
-    desc: "Narrativa experimental",
-    tags: ["instalacion", "color"]
+    desc: "Performance audiovisual",
+    tags: ["vr", "videojuegos"]
   },
   {
     img: "img/magma5.png",
     video: "video/video5.mp4",
     volume: 0.1,
     title: "Proyecto 5",
-    desc: "Narrativa experimental",
-    tags: ["narrativa", "instalacion"]
+    desc: "Instalación interactiva",
+    tags: ["animación", "pueblos-originarios"]
   },
   {
     img: "img/magma2.png",
     video: "video/video2.mp4",
     volume: 0.5, // 0.0 .. 1.0 — adjust per clip
     title: "Proyecto 6",
-    desc: "Narrativa experimental",
-    tags: ["narrativa", "color"]
+    desc: "Película experimental",
+    tags: ["color", "animación"]
   },
   {
     img: "img/magma3.png",
     video: "video/video3.mp4",
     volume: 0.5,
     title: "Proyecto 7",
-    desc: "Narrativa experimental",
-    tags: ["narrativa", "sonido"]
+    desc: "Experiencia sonora",
+    tags: ["ruido", "sonido-directo"]
   },
   {
     img: "img/magma4.png",
     video: "video/video4.mp4",
     volume: 0.5,
     title: "Proyecto 8",
-    desc: "Narrativa experimental",
-    tags: ["instalacion", "color"]
+    desc: "Realidad aumentada",
+    tags: ["instalacion", "eye-tracking"]
   },
   {
     img: "img/magma5.png",
     video: "video/video5.mp4",
     volume: 0.1,
     title: "Proyecto 9",
-    desc: "Narrativa experimental",
-    tags: ["narrativa", "instalacion"]
+    desc: "Virtualidad inmersiva",
+    tags: ["videojuegos", "vr"]
   },
   // add more objects freely - keep the same fields for bulk edits
 ];
