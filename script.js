@@ -13,8 +13,8 @@ const gallery = document.getElementById('gallery');
 // Global volumes you can tweak (see also CSS variables for card sizes)
 const SETTINGS = {
     ambientVol: 1,  // ambient soundtrack default volume when ON
-    hoverVol: 0.5,    // UI hover sound volume
-    clickVol: 0.5,    // UI click sound volume
+    hoverVol: 0.8,    // UI hover sound volume
+    clickVol: 0.7,    // UI click sound volume
     videoVol: 0.5     // default video volume if a clip doesn't specify one
 };
 const ambient = new Audio("audio/ambient.mp3");
