@@ -13,8 +13,8 @@ const gallery = document.getElementById('gallery');
 // Global volumes you can tweak (see also CSS variables for card sizes)
 const SETTINGS = {
     ambientVol: 1,  // ambient soundtrack default volume when ON
-    hoverVol: 0.8,    // UI hover sound volume
-    clickVol: 0.7,    // UI click sound volume
+    hoverVol: 0.5,    // UI hover sound volume
+    clickVol: 0.5,    // UI click sound volume
     videoVol: 0.5     // default video volume if a clip doesn't specify one
 };
 const ambient = new Audio("audio/ambient.mp3");
@@ -38,8 +38,6 @@ function ensureAudioContext() {
 
 let ambientOn = false;
 let ambientFadeInterval = null;
-// Track whether the modal is open (any video shown)
-let modalOpen = false;
 
 function fadeAmbient(toVol, duration = 600) {
     if (ambientFadeInterval) clearInterval(ambientFadeInterval);
@@ -61,9 +59,7 @@ function fadeAmbient(toVol, duration = 600) {
 }
 
 toggleAmbient.addEventListener('click', () => {
-    // Toggle ambient on/off explicitly (user action)
-    const target = ambientOn ? 0 : SETTINGS.ambientVol;
-    fadeAmbient(target, 600);
+    fadeAmbient(ambientOn ? 0 : SETTINGS.ambientVol, 600);
     ambientOn = !ambientOn;
 });
 
@@ -84,7 +80,6 @@ function playSound(sound) {
 startBtn.addEventListener('click', () => {
     ensureAudioContext();
     if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
-    // Start ambient explicitly on user consent
     if (ambient.paused) ambient.play().catch(() => {});
     ambient.volume = SETTINGS.ambientVol;
     ambientOn = true;
@@ -302,15 +297,9 @@ function openVideo(card) {
     });
 
     const wasOpen = videoModal.classList.contains('open');
-    // Mark modal as open (used to suppress ambient restarts while switching)
-    modalOpen = true;
     const newSrc = card.dataset.video;
 
-    // Requirement: ambient music must NOT play while a video is loading or opened.
-    // Fade out immediately on open to avoid cracks during the loading phase.
-    fadeAmbient(0, 200);
-
-    // Prepare player: hide visual while loading
+    // Prepare player: hide visual; ambient continues until video actually plays
     try { player.pause(); } catch (e) {}
     player.classList.add('fade-out');
     player.style.visibility = 'hidden';
@@ -389,20 +378,11 @@ function closeModal() {
         player.style.aspectRatio = '';
     } catch (e) {}
     videoModal.classList.remove('open');
-    // Mark modal now closed
-    modalOpen = false;
     // If user wanted ambient, bring it back smoothly
-    // Only restore ambient when modal is fully closed and the user had ambient enabled.
-    // This avoids restarting ambient during tag navigation (when openVideo is called
-    // again while modal remains open).
     if (ambientOn) {
         ensureAudioContext();
         if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
-        // small delay to ensure any immediate openVideo doesn't re-trigger
-        setTimeout(() => {
-            // If modal was reopened quickly (modalOpen true), don't restore
-            if (!modalOpen) fadeAmbient(SETTINGS.ambientVol, 400);
-        }, 120);
+        fadeAmbient(SETTINGS.ambientVol, 400);
     }
 }
 
@@ -453,33 +433,3 @@ function getClipVolume(card) {
     const base = hasClip ? clip : SETTINGS.videoVol;
     return clamp01(base);
 }
-
-// Pause audio/video when page becomes hidden or is being frozen/unloaded.
-function handleVisibilityHidden() {
-    try { player.pause(); } catch (e) {}
-    // fade ambient to 0 quickly but remember ambientOn state (so we can resume later)
-    if (!ambient.paused) {
-        fadeAmbient(0, 150);
-    }
-}
-
-function handleVisibilityVisible() {
-    // Only resume ambient if the user previously had it on and the modal is not open.
-    if (ambientOn && !modalOpen) {
-        ensureAudioContext();
-        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
-        fadeAmbient(SETTINGS.ambientVol, 400);
-    }
-}
-
-document.addEventListener('visibilitychange', () => {
-    if (document.hidden) handleVisibilityHidden(); else handleVisibilityVisible();
-});
-
-// pagehide triggers when unloading or suspending (mobile lock, OS background)
-window.addEventListener('pagehide', () => { handleVisibilityHidden(); });
-// Freeze/focusless state (some browsers) - treat as hidden
-document.addEventListener('freeze', () => { handleVisibilityHidden(); });
-
-// Additionally, when beforeunload we ensure audio stops
-window.addEventListener('beforeunload', () => { handleVisibilityHidden(); });
