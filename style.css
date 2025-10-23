@@ -47,16 +47,16 @@ body {
 
 header {
   position: fixed;
-  left: 16px;
-  top: 12px;
-  z-index: 30;
+  right: min(16px, 3vw);
+  top: min(12px, 3vh);
+  z-index: 40;
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
-/* Reserve space at top so header buttons don't overlap the grid cards
-   The grid itself is padded from the top to ensure cards start below header. */
-.grid {
-  padding-top: 64px; /* enough to clear header + some breathing room */
-}
+/* No extra reserved header space; keep content full-bleed underneath.
+  Header is a floating overlay (top-right) with minimal obstruction. */
 
 .ambient-toggle,
 .start-btn,
@@ -64,7 +64,9 @@ header {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: #fff;
-  padding: 10px 16px;
+  /* Keep button size proportionally consistent on any device */
+  font-size: clamp(12px, 1.8vw, 16px);
+  padding: clamp(6px, 1.0vw, 10px) clamp(10px, 1.6vw, 14px);
   border-radius: 8px;
   cursor: pointer;
 }
