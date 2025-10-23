@@ -26,8 +26,7 @@ body {
   justify-content: center;
   align-items: center;
   text-align: center;
-  /* Allow page scrolling/touch on mobile devices */
-  overflow: auto;
+  overflow: hidden;
   /* Hide stray text caret that can appear after modal interactions */
   caret-color: transparent;
 }
@@ -47,16 +46,10 @@ body {
 
 header {
   position: fixed;
-  right: min(16px, 3vw);
-  top: min(12px, 3vh);
-  z-index: 40;
-  display: flex;
-  gap: 8px;
-  align-items: center;
+  left: 16px;
+  top: 12px;
+  z-index: 30;
 }
-
-/* No extra reserved header space; keep content full-bleed underneath.
-  Header is a floating overlay (top-right) with minimal obstruction. */
 
 .ambient-toggle,
 .start-btn,
@@ -64,9 +57,7 @@ header {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: #fff;
-  /* Keep button size proportionally consistent on any device */
-  font-size: clamp(12px, 1.8vw, 16px);
-  padding: clamp(6px, 1.0vw, 10px) clamp(10px, 1.6vw, 14px);
+  padding: 10px 16px;
   border-radius: 8px;
   cursor: pointer;
 }
@@ -295,14 +286,14 @@ body::before {
 }
 
 /* Tablets: 4 columns */
-@media (min-width: 481px) and (max-width: 1420px) {
+@media (min-width: 482px) and (max-width: 1241px) {
   .grid { grid-template-columns: repeat(var(--cols-tablet), 1fr); }
   :root { --grid-gap: 14px; }
   .video-frame { width: 86vw; }
 }
 
 /* Desktops and larger: 8 columns (max) */
-@media (min-width: 1421px) {
+@media (min-width: 1242px) {
   .grid { grid-template-columns: repeat(var(--cols-desktop), 1fr); }
   :root { --grid-gap: 16px; }
 }
