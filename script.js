@@ -220,6 +220,12 @@ function buildGallery() {
         img.draggable = false;
         img.className = 'thumb';
         card.appendChild(img);
+
+        // Title overlay for hover/focus
+        const titleOverlay = document.createElement('div');
+        titleOverlay.className = 'card-title';
+        titleOverlay.textContent = p.title || '';
+        card.appendChild(titleOverlay);
         frag.appendChild(card);
     });
     // append fragment for better performance when many cards
