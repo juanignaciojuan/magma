@@ -306,7 +306,11 @@ function openVideo(card) {
     modalOpen = true;
     const newSrc = card.dataset.video;
 
-    // Prepare player: hide visual; ambient continues until video actually plays
+    // Requirement: ambient music must NOT play while a video is loading or opened.
+    // Fade out immediately on open to avoid cracks during the loading phase.
+    fadeAmbient(0, 200);
+
+    // Prepare player: hide visual while loading
     try { player.pause(); } catch (e) {}
     player.classList.add('fade-out');
     player.style.visibility = 'hidden';
