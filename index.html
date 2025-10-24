@@ -4,18 +4,26 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Magma 2025</title>
-    <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
+    <title>magma</title>
+    <link rel="icon" type="image/x-icon" href="img/favicon-blanco-rounded.ico">
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="locked app-loading">
     <!-- Moving pixel dust background -->
     <canvas id="particleCanvas"></canvas>
 
-    <header>
-        <button id="toggleAmbient" class="ambient-toggle">♫</button>
-        <button id="reshuffleBtn" class="ambient-toggle" title="Reshuffle gallery">↻</button>
+    <!-- Header bar in normal flow: left = controls, center = title, right = info button -->
+    <header class="site-header">
+        <div class="header-left">
+            <button id="toggleAmbient" class="ambient-toggle" title="Ambient on/off">♫</button>
+            <button id="reshuffleBtn" class="ambient-toggle" title="Reshuffle gallery">↻</button>
+            <button id="openMapBtn" class="ambient-toggle" title="Ver mapa del evento">&#9947</button>
+        </div>
+        <h1 class="site-title">Catálogo Magma 2025</h1>
+        <div class="header-right">
+            <button id="openInfoBtn" class="ambient-toggle" title="Información">info</button>
+        </div>
     </header>
 
     <main>
@@ -37,8 +45,29 @@
         </div>
     </div>
 
+    <!-- Map modal (shows a static PNG/JPG map). Click the X or the dark area to close. -->
+    <div class="video-modal" id="mapModal">
+        <div class="map-frame">
+            <button class="close-btn" id="closeMap">X</button>
+            <img id="mapImage" class="map-image" alt="Mapa del evento" />
+        </div>
+    </div>
+
+    <!-- Info modal with event text and external link -->
+    <div class="video-modal" id="infoModal">
+        <div class="info-frame">
+            <button class="close-btn" id="closeInfo">X</button>
+            <h2>Magma 2025</h2>
+            <p>Muestra anual de Proyecto Audiovisual de la cátedra Campos-Trilnick (Diseño de Imagen y Sonido, FADU–UBA), gestionada por lxs estudiantes en colaboración con lxs docentes</p>
+            <p>
+                Diseño web y programación:
+                <a href="https://juanigonzalez.cargo.site" target="_blank" rel="noopener noreferrer" id="juan-gonzalez">juanigonzalez</a>
+            </p>
+        </div>
+    </div>
+
     <div class="start-overlay" id="startOverlay">
-        <h2>Muestra Magma 2025</h2>
+        <h2>Magma 2025</h2>
         <p>Estación de Consulta</p>
         <button id="startBtn" class="start-btn">Entrar</button>
     </div>
