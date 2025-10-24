@@ -1,0 +1,90 @@
+@font-face {
+    font-family: 'Bethany Elingston';
+    src: url('BethanyElingston.woff2') format('woff2'),
+        url('BethanyElingston.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Red Hat Display';
+    src: url('RedHatDisplay-Medium.woff2') format('woff2'),
+        url('RedHatDisplay-Medium.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Red Hat Display';
+    src: url('RedHatDisplay-Bold.woff2') format('woff2'),
+        url('RedHatDisplay-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Red Hat Display';
+    src: url('RedHatDisplay-Regular.woff2') format('woff2'),
+        url('RedHatDisplay-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Red Hat Display';
+    src: url('RedHatDisplay-Light.woff2') format('woff2'),
+        url('RedHatDisplay-Light.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Creato Display';
+    src: url('CreatoDisplay-ExtraBold.woff2') format('woff2'),
+        url('CreatoDisplay-ExtraBold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Creato Display';
+    src: url('CreatoDisplay-Medium.woff2') format('woff2'),
+        url('CreatoDisplay-Medium.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Creato Display';
+    src: url('CreatoDisplay-Bold.woff2') format('woff2'),
+        url('CreatoDisplay-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Creato Display';
+    src: url('CreatoDisplay-Regular.woff2') format('woff2'),
+        url('CreatoDisplay-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Creato Display';
+    src: url('CreatoDisplay-Black.woff2') format('woff2'),
+        url('CreatoDisplay-Black.woff') format('woff');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+

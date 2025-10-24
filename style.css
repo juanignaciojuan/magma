@@ -1,3 +1,93 @@
+@font-face {
+  font-family: 'Bethany Elingston';
+  src: url('./fonts/BethanyElingston.woff2') format('woff2'),
+    url('./fonts/BethanyElingston.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Red Hat Display';
+  src: url('./fonts/RedHatDisplay-Medium.woff2') format('woff2'),
+    url('./fonts/RedHatDisplay-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Red Hat Display';
+  src: url('./fonts/RedHatDisplay-Bold.woff2') format('woff2'),
+    url('./fonts/RedHatDisplay-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Red Hat Display';
+  src: url('./fonts/RedHatDisplay-Regular.woff2') format('woff2'),
+    url('./fonts/RedHatDisplay-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Red Hat Display';
+  src: url('./fonts/RedHatDisplay-Light.woff2') format('woff2'),
+    url('./fonts/RedHatDisplay-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Creato Display';
+  src: url('./fonts/CreatoDisplay-ExtraBold.woff2') format('woff2'),
+    url('./fonts/CreatoDisplay-ExtraBold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Creato Display';
+  src: url('./fonts/CreatoDisplay-Medium.woff2') format('woff2'),
+    url('./fonts/CreatoDisplay-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Creato Display';
+  src: url('./fonts/CreatoDisplay-Bold.woff2') format('woff2'),
+    url('./fonts/CreatoDisplay-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Creato Display';
+  src: url('./fonts/CreatoDisplay-Regular.woff2') format('woff2'),
+    url('./fonts/CreatoDisplay-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Creato Display';
+  src: url('./fonts/CreatoDisplay-Black.woff2') format('woff2'),
+    url('./fonts/CreatoDisplay-Black.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   /* THEME */
   --bg: #000;
@@ -8,10 +98,14 @@
      - Change the breakpoints below if your screens differ.
      - --grid-gap controls spacing between cards.
   */
-  --cols-mobile: 2;   /* phones: min resolution */
-  --cols-tablet: 4;   /* tablets */
-  --cols-desktop: 8;  /* large screens: max */
-  --grid-gap: 16px;   /* space between cards */
+  --cols-mobile: 2;
+  /* phones: min resolution */
+  --cols-tablet: 4;
+  /* tablets */
+  --cols-desktop: 8;
+  /* large screens: max */
+  --grid-gap: 16px;
+  /* space between cards */
 }
 
 html,
@@ -20,15 +114,24 @@ body {
   margin: 0;
   background: var(--bg);
   color: #fff;
-  font-family: system-ui, Segoe UI, Roboto, sans-serif;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  overflow: hidden;
+  font-family: 'Red Hat Display', sans-serif;
+  /* Use normal block flow so header doesn't appear in the middle while content loads */
+  display: block;
+  /* Allow scrolling when there are many cards */
+  overflow: auto;
+  -webkit-overflow-scrolling: touch; /* smooth iOS scrolling */
   /* Hide stray text caret that can appear after modal interactions */
   caret-color: transparent;
+}
+
+#juan-gonzalez {
+  color: white;
+  text-decoration: underline;
+}
+
+#juan-gonzalez:hover {
+  color: black;
+  background-color: white;
 }
 
 /* Particle canvas fills background */
@@ -39,16 +142,51 @@ body {
   width: 100%;
   height: 100%;
   z-index: 0;
+  /* Do not intercept clicks or scroll */
+  pointer-events: none;
   /*background: 
     url("img/background.png") no-repeat center center / 100%,
     radial-gradient(circle at center, #0b0b0d 0%, #010104 100%);*/
 }
 
-header {
-  position: fixed;
-  left: 16px;
-  top: 12px;
+/* Header bar in document flow (not overlay). Three parts: left buttons, center title, right button */
+header.site-header {
+  position: relative;
+  /* stay in flow */
   z-index: 30;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  box-sizing: border-box;
+}
+
+.header-left,
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.site-title {
+  margin: 0;
+  flex: 1 1 auto;
+  /* take remaining space so text can center */
+  text-align: center;
+  font-size: clamp(16px, 2.4vw, 22px);
+  font-family: 'Creato Display', 'Red Hat Display', system-ui, sans-serif;
+  font-weight: 700;
+}
+
+/* Keep content clear of the fixed header using simple padding on <main>.
+   - Edit the padding-top value if you change the button size or spacing.
+   - This avoids the first row of cards being cut under the header,
+     even when the browser isn't in full screen. */
+main {
+  padding-top: 0;
+  /* header is in flow, so no extra top padding needed */
 }
 
 .ambient-toggle,
@@ -60,6 +198,7 @@ header {
   padding: 10px 16px;
   border-radius: 8px;
   cursor: pointer;
+  font-family: 'Red Hat Display', sans-serif;
 }
 
 .grid {
@@ -73,20 +212,24 @@ header {
   padding: 24px;
   box-sizing: border-box;
   z-index: 5;
-  max-width: 1600px; /* center the grid on large screens */
+  max-width: 1600px;
+  /* center the grid on large screens */
   margin: 0 auto;
 }
 
 .card {
   width: 100%;
-  padding: 0; /* no inner gap; image fills card */
+  padding: 0;
+  /* no inner gap; image fills card */
   border-radius: 12px;
   overflow: hidden;
   position: relative;
   cursor: pointer;
   transition: transform 220ms, box-shadow 220ms;
-  background: #000; /* black background until media loads */
-  aspect-ratio: 1 / 1; /* keep square cards */
+  background: #000;
+  /* black background until media loads */
+  aspect-ratio: 1 / 1;
+  /* keep square cards */
 }
 
 .card:hover {
@@ -100,9 +243,12 @@ header {
   /* aspect ratio comes from parent card */
   display: block;
   object-fit: cover;
-  border-radius: 0; /* card provides rounding */
-  background: #000; /* keep black while loading */
-  opacity: 0;       /* hide until the real image has loaded */
+  border-radius: 0;
+  /* card provides rounding */
+  background: #000;
+  /* keep black while loading */
+  opacity: 0;
+  /* hide until the real image has loaded */
   transition: opacity 0.3s ease, transform 0.4s ease, filter 0.4s ease;
 }
 
@@ -121,16 +267,19 @@ header {
   padding: 8px 10px 10px;
   color: #fff;
   text-align: center;
-  font-size: clamp(12px, 1.5vw, 16px);
+  font-family: 'Red Hat Display', sans-serif;
+  font-size: clamp(12px, 1.5vw, 12px);
   font-weight: 600;
   letter-spacing: 0.2px;
-  background: linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0.0));
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.0));
   opacity: 0;
   transform: translateY(6px);
   transition: opacity 160ms ease, transform 180ms ease;
-  pointer-events: none; /* avoids blocking clicks */
+  pointer-events: none;
+  /* avoids blocking clicks */
   z-index: 2;
 }
+
 .card:hover .card-title,
 .card:focus-within .card-title {
   opacity: 1;
@@ -166,6 +315,71 @@ header {
   overflow: hidden;
   /*position: relative;*/
   box-shadow: 0 0 40px rgba(0, 230, 255, 0.2);
+}
+
+/* Map modal layout (reuses the same overlay style as .video-modal) */
+.map-frame {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba(0, 230, 255, 0.2);
+  max-width: 90vw;
+  /* keep image inside viewport width */
+  max-height: 85vh;
+  /* keep image inside viewport height */
+}
+
+.map-image {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 90vw;
+  max-height: 85vh;
+}
+
+/* Back button for map modal (top-left). Same size as close, arrow icon) */
+/* (Back button removed by request) */
+
+/* Orange tag-styled button that opens the map from the video info area */
+.tag.map-btn {
+  background: rgba(255, 149, 0, 0.18);
+  border: 1px solid rgba(255, 149, 0, 0.4);
+  color: #fff;
+  /* keep text white for contrast */
+}
+
+.tag.map-btn:hover {
+  background: rgba(255, 149, 0, 0.35);
+}
+
+/* Info modal layout */
+.info-frame {
+  position: relative;
+  background: #070707;
+  color: #fff;
+  border-radius: 10px;
+  padding: 20px 22px 24px;
+  width: min(720px, 92vw);
+  box-shadow: 0 0 40px rgba(0, 230, 255, 0.2);
+}
+
+.info-frame h2 {
+  margin: 8px 0 10px;
+  font-size: 22px;
+}
+
+.info-frame p {
+  margin: 8px 0;
+  line-height: 1.5;
+}
+
+.info-frame a {
+  color: #00e6ff;
+  text-decoration: underline;
 }
 
 #player {
@@ -231,11 +445,15 @@ header {
   padding: 16px 20px;
   font-size: 14px;
   box-sizing: border-box;
+  font-family: 'Creato Display', sans-serif;
+  font-weight: normal;
 }
 
 .video-info h2 {
   margin: 0 0 4px;
   font-size: 18px;
+  font-family: 'Red Hat Display', sans-serif;
+  font-weight: bold;
 }
 
 .tag-container {
@@ -253,6 +471,7 @@ header {
   cursor: pointer;
   font-size: 13px;
   transition: background 0.2s;
+  font-family: 'Red Hat Display', sans-serif;
 }
 
 .tag:hover {
@@ -287,6 +506,10 @@ body::before {
   z-index: 80;
 }
 
+.close-btn h2{
+  text-align: center;
+}
+
 .start-overlay {
   position: fixed;
   inset: 0;
@@ -294,34 +517,76 @@ body::before {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.85);
+  background: transparent; /* no dark veil — shows only over the background animation */
   z-index: 50;
   text-align: center;
 }
 
+.start-overlay p{
+  margin: 0px 0px 12px 0px;
+}
+
+.start-overlay h2{
+  margin: 0px 0px px 0px;
+}
+
+/* While locked (before pressing Start), hide the page UI so the overlay sits only above the background canvas */
+body.locked .site-header,
+body.locked main,
+body.app-loading .site-header,
+body.app-loading main {
+  display: none;
+}
+
 /* responsive gallery spacing */
-.grid { padding: 24px; }
+.grid {
+  padding: 24px;
+}
 
 /* MEDIA QUERIES: fixed column counts by device class */
 /* Phones (min resolution): 2 columns */
-@media (max-width: 481px) {
-  .grid { grid-template-columns: repeat(var(--cols-mobile), 1fr); }
-  :root { --grid-gap: 10px; }
-  .video-frame { width: 92vw; }
-  #player { max-height: 60vh; }
+@media (max-width: 450px) {
+  .grid {
+    grid-template-columns: repeat(var(--cols-mobile), 1fr);
+  }
+
+  :root {
+    --grid-gap: 10px;
+  }
+
+  .video-frame {
+    width: 92vw;
+  }
+
+  #player {
+    max-height: 60vh;
+  }
 }
 
 /* Tablets: 4 columns */
-@media (min-width: 482px) and (max-width: 1241px) {
-  .grid { grid-template-columns: repeat(var(--cols-tablet), 1fr); }
-  :root { --grid-gap: 14px; }
-  .video-frame { width: 86vw; }
+@media (min-width: 451px) and (max-width: 1241px) {
+  .grid {
+    grid-template-columns: repeat(var(--cols-tablet), 1fr);
+  }
+
+  :root {
+    --grid-gap: 14px;
+  }
+
+  .video-frame {
+    width: 86vw;
+  }
 }
 
 /* Desktops and larger: 8 columns (max) */
 @media (min-width: 1242px) {
-  .grid { grid-template-columns: repeat(var(--cols-desktop), 1fr); }
-  :root { --grid-gap: 16px; }
+  .grid {
+    grid-template-columns: repeat(var(--cols-desktop), 1fr);
+  }
+
+  :root {
+    --grid-gap: 16px;
+  }
 }
 
 /* interactive area around cards for closing modal */

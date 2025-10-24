@@ -8,14 +8,23 @@ const startOverlay = document.getElementById('startOverlay');
 const canvas = document.getElementById('particleCanvas');
 const ctx = canvas.getContext('2d');
 const gallery = document.getElementById('gallery');
+// Map UI elements
+const openMapBtn = document.getElementById('openMapBtn');
+const mapModal = document.getElementById('mapModal');
+const closeMapBtn = document.getElementById('closeMap');
+const mapImage = document.getElementById('mapImage');
+// Info UI elements
+const openInfoBtn = document.getElementById('openInfoBtn');
+const infoModal = document.getElementById('infoModal');
+const closeInfoBtn = document.getElementById('closeInfo');
 
 /* ---------- AUDIO ---------- */
 // Global volumes you can tweak (see also CSS variables for card sizes)
 const SETTINGS = {
-    ambientVol: 1,  // ambient soundtrack default volume when ON
+    ambientVol: 0.4,  // ambient soundtrack default volume when ON
     hoverVol: 0.5,    // UI hover sound volume
     clickVol: 0.5,    // UI click sound volume
-    videoVol: 0.5     // default video volume if a clip doesn't specify one
+    videoVol: 0.2     // default video volume if a clip doesn't specify one
 };
 const ambient = new Audio("audio/ambient.mp3");
 ambient.loop = true;
@@ -25,6 +34,34 @@ const hoverSound = new Audio("audio/hover.mp3");
 hoverSound.volume = SETTINGS.hoverVol;
 const clickSound = new Audio("audio/click.mp3");
 clickSound.volume = SETTINGS.clickVol;
+
+// Path to your event map image (put your file at this path)
+const MAP_IMAGE_SRC = 'img/map.png';
+const MAP_VIDEO_LOW_VOL = 0.1; // video volume while map is open (when opened from video)
+let mapOpenedFromVideo = false;
+let mapPrevVideoVol = null;
+let playerVolFadeInterval = null;
+
+function fadePlayerVolume(toVol, duration = 300) {
+    try {
+        if (playerVolFadeInterval) clearInterval(playerVolFadeInterval);
+        const start = Math.max(0, Math.min(1, player.volume || 0));
+        const target = Math.max(0, Math.min(1, toVol));
+        const steps = Math.max(1, Math.round(duration / 30));
+        const step = (target - start) / steps;
+        let n = 0;
+        playerVolFadeInterval = setInterval(() => {
+            n++;
+            const v = start + step * n;
+            player.volume = Math.max(0, Math.min(1, v));
+            if (n >= steps) {
+                player.volume = target;
+                clearInterval(playerVolFadeInterval);
+                playerVolFadeInterval = null;
+            }
+        }, 30);
+    } catch (_) { /* ignore */ }
+}
 
 // For mobile autoplay policies: create an AudioContext to unlock audio on first gesture
 let audioCtx = null;
@@ -59,6 +96,7 @@ function fadeAmbient(toVol, duration = 600) {
 }
 
 toggleAmbient.addEventListener('click', () => {
+    playSound(clickSound);
     fadeAmbient(ambientOn ? 0 : SETTINGS.ambientVol, 600);
     ambientOn = !ambientOn;
 });
@@ -78,13 +116,15 @@ function playSound(sound) {
 
 /* ---------- START BUTTON ---------- */
 startBtn.addEventListener('click', () => {
+    playSound(clickSound);
     ensureAudioContext();
     if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
     if (ambient.paused) ambient.play().catch(() => {});
     ambient.volume = SETTINGS.ambientVol;
     ambientOn = true;
     toggleAmbient.textContent = '♫';
-    startOverlay.style.display = 'none';
+        startOverlay.style.display = 'none';
+        try { document.body.classList.remove('locked'); } catch (_) {}
 });
 
 // One-time unlock for audio on first pointer interaction (improves mobile)
@@ -104,8 +144,6 @@ window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
 let t = 0;
-// Particle background disabled; using film-grain instead.
-// let mouseX = 0; let mouseY = 0;
 
 // Grain animation state
 let grains = [];
@@ -204,7 +242,9 @@ function buildGallery() {
         const card = document.createElement('div');
         card.className = 'card';
         card.dataset.video = p.video;
-        card.dataset.volume = (p.volume != null ? p.volume : 1);
+    // Only set per-clip volume if provided in data.js. If absent, we don't
+    // write a value so getClipVolume() will fall back to SETTINGS.videoVol.
+    if (p.volume != null) card.dataset.volume = p.volume;
         card.dataset.title = p.title;
         card.dataset.desc = p.desc;
         card.dataset.tags = JSON.stringify(p.tags);
@@ -229,6 +269,8 @@ function buildGallery() {
         frag.appendChild(card);
     });
     // append fragment for better performance when many cards
+        // Reveal the app UI shortly after gallery is in the DOM (avoids header flash)
+        revealAppSoon();
     gallery.appendChild(frag);
 
     // Add interactions after cards are created
@@ -278,10 +320,70 @@ document.querySelectorAll('.thumb').forEach(i => thumbObserver.observe(i));
 // reshuffle button
 const reshuffleBtn = document.getElementById('reshuffleBtn');
 if (reshuffleBtn) reshuffleBtn.addEventListener('click', () => {
+    playSound(clickSound);
     buildGallery();
     // Re-observe all new thumbnails so they load and aspect ratios are measured
     document.querySelectorAll('.thumb').forEach(i => thumbObserver.observe(i));
 });
+
+    // After the gallery is built (or on next paint), remove the app-loading state
+    function revealAppSoon() {
+        try {
+            if (!document.body.classList.contains('app-loading')) return;
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                document.body.classList.remove('app-loading');
+            }));
+        } catch (_) {}
+    }
+
+/* ---------- MAP MODAL ---------- */
+function openMap(opts = {}) {
+    playSound(clickSound);
+    // Load the map image and open the overlay
+    try { mapImage.src = MAP_IMAGE_SRC; } catch (_) {}
+    if (mapModal && !mapModal.classList.contains('open')) mapModal.classList.add('open');
+    // If the map is opened from inside the video modal, fade the video's volume down
+    const fromVideo = !!opts.fromVideo;
+    if (fromVideo && videoModal && videoModal.classList.contains('open')) {
+        mapOpenedFromVideo = true;
+        try { mapPrevVideoVol = player.volume; } catch (_) { mapPrevVideoVol = null; }
+        if (typeof mapPrevVideoVol === 'number') fadePlayerVolume(MAP_VIDEO_LOW_VOL, 250);
+    } else {
+        mapOpenedFromVideo = false;
+    }
+    scheduleInactivity();
+}
+
+function closeMap() {
+    playSound(clickSound);
+    // Clear image to free memory for big PNGs
+    try { mapImage.src = ''; } catch (_) {}
+    if (mapModal) mapModal.classList.remove('open');
+    // If we lowered the video's volume when opening the map, restore it smoothly
+    if (mapOpenedFromVideo && videoModal && videoModal.classList.contains('open')) {
+        if (typeof mapPrevVideoVol === 'number') fadePlayerVolume(mapPrevVideoVol, 250);
+    }
+}
+
+if (openMapBtn) openMapBtn.addEventListener('click', openMap);
+if (closeMapBtn) closeMapBtn.addEventListener('click', closeMap);
+if (mapModal) mapModal.addEventListener('click', (e) => {
+    if (e.target === mapModal) closeMap();
+});
+
+/* ---------- INFO MODAL ---------- */
+function openInfo() {
+    playSound(clickSound);
+    if (infoModal && !infoModal.classList.contains('open')) infoModal.classList.add('open');
+    scheduleInactivity();
+}
+function closeInfo() {
+    playSound(clickSound);
+    if (infoModal) infoModal.classList.remove('open');
+}
+if (openInfoBtn) openInfoBtn.addEventListener('click', openInfo);
+if (closeInfoBtn) closeInfoBtn.addEventListener('click', closeInfo);
+if (infoModal) infoModal.addEventListener('click', (e) => { if (e.target === infoModal) closeInfo(); });
 
 /* ---------- VIDEO MODAL ---------- */
 function openVideo(card) {
@@ -301,6 +403,13 @@ function openVideo(card) {
         t.onclick = (e) => { e.stopPropagation(); openTag(tag); };
         tagContainer.appendChild(t);
     });
+    // Orange "Mapa" button to the right of tags (opens the same map modal)
+    const mapBtn = document.createElement('button');
+    mapBtn.type = 'button';
+    mapBtn.className = 'tag map-btn';
+    mapBtn.textContent = 'Mapa';
+    mapBtn.onclick = (e) => { e.stopPropagation(); openMap({ fromVideo: true }); };
+    tagContainer.appendChild(mapBtn);
 
     const wasOpen = videoModal.classList.contains('open');
     const newSrc = card.dataset.video;
@@ -312,6 +421,8 @@ function openVideo(card) {
 
     // Open modal early so the browser eagerly starts networking
     if (!wasOpen) videoModal.classList.add('open');
+    // Start inactivity watch while a modal is open
+    scheduleInactivity();
 
     // Set source and begin loading
     player.src = newSrc;
@@ -392,7 +503,7 @@ function closeModal() {
     }
 }
 
-closeVideo.addEventListener('click', closeModal);
+closeVideo.addEventListener('click', () => { playSound(clickSound); closeModal(); });
 
 /* ---------- TAG NAVIGATION ---------- */
 function openTag(tag) {
@@ -429,10 +540,40 @@ videoModal.addEventListener('click', (e) => {
 // Ensure videos loop (guard in case of partial DOM)
 if (player) player.loop = true;
 
+/* ---------- INACTIVITY AUTO-CLOSE (60s) ---------- */
+const INACTIVITY_MS = 60 * 1000; // 60 seconds
+let inactivityTimer = null;
+
+function anyModalOpen() {
+    return (videoModal && videoModal.classList.contains('open')) ||
+           (mapModal && mapModal.classList.contains('open')) ||
+           (infoModal && infoModal.classList.contains('open'));
+}
+
+function scheduleInactivity() {
+    if (inactivityTimer) clearTimeout(inactivityTimer);
+    if (!anyModalOpen()) return;
+    inactivityTimer = setTimeout(() => {
+        if (videoModal && videoModal.classList.contains('open')) closeModal();
+        if (mapModal && mapModal.classList.contains('open')) closeMap();
+    }, INACTIVITY_MS);
+}
+
+function resetInactivityOnEvent() {
+    if (anyModalOpen()) scheduleInactivity();
+}
+
+['pointerdown','mousemove','keydown','wheel','touchstart'].forEach(ev => {
+    document.addEventListener(ev, resetInactivityOnEvent, { passive: true });
+});
+
 /* ---------- AUDIO UTILITIES ---------- */
 function clamp01(x) { return Math.max(0, Math.min(1, x)); }
 function getClipVolume(card) {
-    // SETTINGS has priority: if global videoVol is 0, force silence regardless of per-clip
+    // Volume rules:
+    // 1) Global SETTINGS.videoVol is the default "bus" level for all videos.
+    // 2) If a card has a per-clip volume, it overrides the global (except rule 3).
+    // 3) If SETTINGS.videoVol === 0, force total silence regardless of per-clip.
     if (SETTINGS.videoVol === 0) return 0;
     const clip = parseFloat(card?.dataset?.volume ?? '');
     const hasClip = !Number.isNaN(clip);
