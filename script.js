@@ -40,7 +40,7 @@ const clickSound = new Audio("audio/click.mp3");
 clickSound.volume = SETTINGS.clickVol;
 
 // Path to your event map image (put your file at this path)
-const MAP_IMAGE_SRC = 'img/map.png';
+const MAP_IMAGE_SRC = 'img/noise1.png';
 const MAP_VIDEO_LOW_VOL = 0.02; // lower target so fade-down is clearly perceptible
 let mapOpenedFromVideo = false;
 let mapPrevVideoVol = null;
@@ -370,8 +370,9 @@ function openMap(opts = {}) {
     scheduleInactivity();
 }
 
-function closeMap() {
-    playSound(clickSound);
+function closeMap(opts = {}) {
+    const silent = !!opts.silent;
+    if (!silent) playSound(clickSound);
     // Clear image to free memory for big PNGs
     try { mapImage.src = ''; } catch (_) {}
     if (mapModal) mapModal.classList.remove('open');
@@ -383,7 +384,7 @@ function closeMap() {
 
 // Header "map" opens with schedule as default view
 if (openMapBtn) openMapBtn.addEventListener('click', () => openMap({ defaultView: 'schedule' }));
-if (closeMapBtn) closeMapBtn.addEventListener('click', closeMap);
+if (closeMapBtn) closeMapBtn.addEventListener('click', () => closeMap());
 if (mapModal) mapModal.addEventListener('click', (e) => {
     if (e.target === mapModal) closeMap();
 });
@@ -462,7 +463,7 @@ function openVideo(card) {
     const mapBtn = document.createElement('button');
     mapBtn.type = 'button';
     mapBtn.className = 'tag map-btn';
-    mapBtn.textContent = 'Mapa y Programación';
+    mapBtn.textContent = 'Mapa';
     // Open map from video: default to map view, and fade video volume
     mapBtn.onclick = (e) => { e.stopPropagation(); openMap({ fromVideo: true, defaultView: 'map' }); };
     tagContainer.appendChild(mapBtn);
@@ -541,7 +542,8 @@ function openVideo(card) {
     player.volume = vol;
 }
 
-function closeModal() {
+function closeModal(opts = {}) {
+    const silent = !!opts.silent;
     try { player.pause(); } catch (e) {}
     try { player.src = ''; player.load(); } catch (e) {}
     try {
@@ -610,8 +612,8 @@ function scheduleInactivity() {
     if (inactivityTimer) clearTimeout(inactivityTimer);
     if (!anyModalOpen()) return;
     inactivityTimer = setTimeout(() => {
-        if (videoModal && videoModal.classList.contains('open')) closeModal();
-        if (mapModal && mapModal.classList.contains('open')) closeMap();
+        if (videoModal && videoModal.classList.contains('open')) closeModal({ silent: true });
+        if (mapModal && mapModal.classList.contains('open')) closeMap({ silent: true });
     }, INACTIVITY_MS);
 }
 
