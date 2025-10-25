@@ -567,6 +567,41 @@ function resetInactivityOnEvent() {
     document.addEventListener(ev, resetInactivityOnEvent, { passive: true });
 });
 
+/* ---------- MUTE WHEN PAGE IS NOT VISIBLE ---------- */
+let visibilityMuteApplied = false;
+let visibilityPrev = { videoMuted: null, ambientVol: null };
+
+function muteForHiddenPage() {
+    try {
+        visibilityPrev.videoMuted = player.muted;
+        player.muted = true; // don't touch player.volume to preserve level
+    } catch (_) {}
+    try {
+        visibilityPrev.ambientVol = ambient.volume;
+        // Smoothly bring ambient to 0; pause when it reaches 0
+        fadeAmbient(0, 200);
+    } catch (_) {}
+    visibilityMuteApplied = true;
+}
+
+function restoreAfterVisible() {
+    if (!visibilityMuteApplied) return;
+    // Restore player muted state only if we changed it
+    try { if (visibilityPrev.videoMuted === false) player.muted = false; } catch (_) {}
+    // Restore ambient only if user has it ON
+    try {
+        if (ambientOn) fadeAmbient(SETTINGS.ambientVol, 200);
+    } catch (_) {}
+    visibilityMuteApplied = false;
+}
+
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) muteForHiddenPage(); else restoreAfterVisible();
+});
+window.addEventListener('pagehide', muteForHiddenPage);
+window.addEventListener('focus', restoreAfterVisible);
+window.addEventListener('blur', muteForHiddenPage);
+
 /* ---------- AUDIO UTILITIES ---------- */
 function clamp01(x) { return Math.max(0, Math.min(1, x)); }
 function getClipVolume(card) {
