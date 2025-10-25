@@ -49,7 +49,17 @@
     <div class="video-modal" id="mapModal">
         <div class="map-frame">
             <button class="close-btn" id="closeMap">X</button>
-            <img id="mapImage" class="map-image" alt="Mapa del evento" />
+            <div class="map-body">
+                <img id="mapImage" class="map-image" alt="Mapa del evento" />
+                <!-- Hidden schedule pane that can be toggled from footer button -->
+                <div id="schedulePane" class="schedule-pane" aria-hidden="true">
+                    <div id="scheduleList" class="schedule-list"></div>
+                </div>
+            </div>
+            <div class="map-footer">
+                <button id="openScheduleBtn" class="map-action" title="Ver programación y guía">Programación</button>
+                <button id="openMapViewBtn" class="map-action" title="Volver a ver el mapa">Mapa</button>
+            </div>
         </div>
     </div>
 
@@ -59,10 +69,10 @@
             <button class="close-btn" id="closeInfo">X</button>
             <h2>Magma 2025</h2>
             <p>Muestra anual de Proyecto Audiovisual de la cátedra Campos-Trilnick (Diseño de Imagen y Sonido, FADU–UBA), gestionada por lxs estudiantes en colaboración con lxs docentes</p>
-            <p>
+            <!--<p>
                 Diseño web y programación:
                 <a href="https://juanigonzalez.cargo.site" target="_blank" rel="noopener noreferrer" id="juan-gonzalez">juanigonzalez</a>
-            </p>
+            </p>-->
         </div>
     </div>
 
@@ -75,6 +85,7 @@
     <footer></footer>
 
     <script src="data.js"></script>
+    <script src="schedule.js"></script>
     <script src="script.js"></script>
 </body>
 

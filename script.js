@@ -13,6 +13,10 @@ const openMapBtn = document.getElementById('openMapBtn');
 const mapModal = document.getElementById('mapModal');
 const closeMapBtn = document.getElementById('closeMap');
 const mapImage = document.getElementById('mapImage');
+const schedulePane = document.getElementById('schedulePane');
+const scheduleList = document.getElementById('scheduleList');
+const openScheduleBtn = document.getElementById('openScheduleBtn');
+const openMapViewBtn = document.getElementById('openMapViewBtn');
 // Info UI elements
 const openInfoBtn = document.getElementById('openInfoBtn');
 const infoModal = document.getElementById('infoModal');
@@ -37,7 +41,7 @@ clickSound.volume = SETTINGS.clickVol;
 
 // Path to your event map image (put your file at this path)
 const MAP_IMAGE_SRC = 'img/map.png';
-const MAP_VIDEO_LOW_VOL = 0.1; // video volume while map is open (when opened from video)
+const MAP_VIDEO_LOW_VOL = 0.02; // lower target so fade-down is clearly perceptible
 let mapOpenedFromVideo = false;
 let mapPrevVideoVol = null;
 let playerVolFadeInterval = null;
@@ -274,11 +278,11 @@ function buildGallery() {
     gallery.appendChild(frag);
 
     // Add interactions after cards are created
-    const HOVER_CAPABLE = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
     gallery.querySelectorAll('.card').forEach(card => {
-        if (HOVER_CAPABLE) {
-            card.addEventListener('mouseenter', () => playSound(hoverSound));
-        }
+        // Play hover sound on real mouse hover; avoid on touch to prevent double sounds
+        card.addEventListener('pointerenter', (ev) => {
+            if (ev.pointerType === 'mouse') playSound(hoverSound);
+        }, { passive: true });
         card.addEventListener('click', () => {
             playSound(clickSound);
             openVideo(card);
@@ -342,12 +346,24 @@ function openMap(opts = {}) {
     // Load the map image and open the overlay
     try { mapImage.src = MAP_IMAGE_SRC; } catch (_) {}
     if (mapModal && !mapModal.classList.contains('open')) mapModal.classList.add('open');
+    // Set default view per caller: 'schedule' or 'map' (default 'map')
+    try {
+        const def = opts.defaultView === 'schedule' ? 'schedule' : 'map';
+        if (def === 'schedule') {
+            if (schedulePane) {
+                renderSchedule();
+                schedulePane.classList.add('open');
+            }
+        } else {
+            schedulePane?.classList.remove('open');
+        }
+    } catch (_) {}
     // If the map is opened from inside the video modal, fade the video's volume down
     const fromVideo = !!opts.fromVideo;
     if (fromVideo && videoModal && videoModal.classList.contains('open')) {
         mapOpenedFromVideo = true;
         try { mapPrevVideoVol = player.volume; } catch (_) { mapPrevVideoVol = null; }
-        if (typeof mapPrevVideoVol === 'number') fadePlayerVolume(MAP_VIDEO_LOW_VOL, 250);
+        if (typeof mapPrevVideoVol === 'number') fadePlayerVolume(MAP_VIDEO_LOW_VOL, 600);
     } else {
         mapOpenedFromVideo = false;
     }
@@ -365,11 +381,50 @@ function closeMap() {
     }
 }
 
-if (openMapBtn) openMapBtn.addEventListener('click', openMap);
+// Header "map" opens with schedule as default view
+if (openMapBtn) openMapBtn.addEventListener('click', () => openMap({ defaultView: 'schedule' }));
 if (closeMapBtn) closeMapBtn.addEventListener('click', closeMap);
 if (mapModal) mapModal.addEventListener('click', (e) => {
     if (e.target === mapModal) closeMap();
 });
+// Footer actions in map modal
+if (openScheduleBtn) openScheduleBtn.addEventListener('click', () => {
+    playSound(clickSound);
+    if (!schedulePane) return;
+    // Always open schedule view
+    try { renderSchedule(); } catch (_) {}
+    schedulePane.classList.add('open');
+});
+if (openMapViewBtn) openMapViewBtn.addEventListener('click', () => {
+    playSound(clickSound);
+    schedulePane?.classList.remove('open');
+});
+
+function renderSchedule() {
+    if (!scheduleList) return;
+    const items = Array.isArray(window.scheduleProjects) ? window.scheduleProjects : [];
+    // Only re-render if empty to avoid duplicates
+    if (scheduleList.childElementCount > 0) return;
+    const frag = document.createDocumentFragment();
+    items.forEach(it => {
+        const wrap = document.createElement('div');
+        wrap.className = 'schedule-item';
+        const h = document.createElement('h3');
+        h.textContent = it.title || '';
+        const p = document.createElement('p');
+        p.textContent = it.desc || '';
+        wrap.appendChild(h); wrap.appendChild(p);
+        frag.appendChild(wrap);
+    });
+    // Fallback if no items available
+    if (!items.length) {
+        const p = document.createElement('p');
+        p.textContent = 'Próximamente: guía y cronograma.';
+        frag.appendChild(p);
+    }
+    scheduleList.innerHTML = '';
+    scheduleList.appendChild(frag);
+}
 
 /* ---------- INFO MODAL ---------- */
 function openInfo() {
@@ -407,8 +462,9 @@ function openVideo(card) {
     const mapBtn = document.createElement('button');
     mapBtn.type = 'button';
     mapBtn.className = 'tag map-btn';
-    mapBtn.textContent = 'Mapa';
-    mapBtn.onclick = (e) => { e.stopPropagation(); openMap({ fromVideo: true }); };
+    mapBtn.textContent = 'Mapa y Programación';
+    // Open map from video: default to map view, and fade video volume
+    mapBtn.onclick = (e) => { e.stopPropagation(); openMap({ fromVideo: true, defaultView: 'map' }); };
     tagContainer.appendChild(mapBtn);
 
     const wasOpen = videoModal.classList.contains('open');
