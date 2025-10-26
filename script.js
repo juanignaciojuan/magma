@@ -135,6 +135,10 @@ startBtn.addEventListener('click', () => {
 function unlockAudioOnFirstGesture() {
     ensureAudioContext();
     if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
+    // Also kick off auto-scroll on first user gesture if enabled
+    try {
+        if (CONFIG.autoScroll && CONFIG.autoScroll.enabled && !autoScrollState.running) startAutoScroll();
+    } catch (_) {}
     document.removeEventListener('pointerdown', unlockAudioOnFirstGesture);
 }
 document.addEventListener('pointerdown', unlockAudioOnFirstGesture);
@@ -172,14 +176,43 @@ function noise(x, y) {
 
 // extend CONFIG with grain params (safe-guard: only add if absent)
 if (typeof CONFIG.grainCount === 'undefined') {
+    /*
+     * EDITABLE: Background particles / film-grain settings
+     *
+     * Tweak these values to change how visible/dark the grains appear over the white background.
+     *
+     * Quick tips to make grains DARKER / more visible:
+     * - Increase grainOpacity (e.g., 0.35 – 0.55)
+     * - Increase grainCount for denser grain (e.g., 2200 – 3200)
+     * - Increase grainSizeMax for chunkier specks (e.g., 3 – 4)
+     * - Increase overlayAlpha for a subtle dark veil over the whole screen (e.g., 0.03 – 0.07)
+     */
     Object.assign(CONFIG, {
-        grainCount: 1600,   // number of grain dots (more visible)
-        grainSizeMin: 1,    // min size in px
-        grainSizeMax: 2,    // max size in px
-        grainSpeed: 0.06,   // vertical speed multiplier
-        grainOpacity: 0.18, // base alpha for grains (visible)
-        backgroundImage: null  // optional background image path (null = plain dark)
+        grainCount: 2200,     // total number of grain dots
+        grainSizeMin: 1,      // minimum dot size (px)
+        grainSizeMax: 3,      // maximum dot size (px)
+        grainSpeed: 0.06,     // vertical drift speed multiplier
+        grainOpacity: 0.4,    // base alpha for each dot (higher = darker dots)
+        overlayAlpha: 0.0,   // subtle dark veil over entire screen (0 = none; higher = darker)
+        backgroundImage: null // optional background image path (null = none)
     });
+}
+
+// EDITABLE: Automatic vertical scroll behavior
+// Tweak these to control speed and behavior of the auto-scroll.
+// - enabled: turn auto-scroll on/off
+// - speedPxPerSec: velocity in pixels per second (e.g., 20–120)
+// - pauseAfterUserMs: pause duration after user interaction (wheel/touch/keys)
+// - loopToTop: when reaching the bottom, jump back to the top and continue
+// - disableWhenModalOpen: don't scroll while a modal (video/map/info) is open
+if (typeof CONFIG.autoScroll === 'undefined') {
+    CONFIG.autoScroll = {
+        enabled: true,
+        speedPxPerSec: 40,
+        pauseAfterUserMs: 3000,
+        loopToTop: true,
+        disableWhenModalOpen: true
+    };
 }
 
 function generateGrains() {
@@ -199,8 +232,8 @@ function generateGrains() {
 
 function drawNoise() {
     const w = canvas.width, h = canvas.height;
-    // dark base
-    ctx.fillStyle = '#000';
+    // white base so the background appears white behind cards
+    ctx.fillStyle = '#fff';
     ctx.fillRect(0, 0, w, h);
 
     // draw grains
@@ -210,14 +243,27 @@ function drawNoise() {
         const yy = (g.y + t * g.speed * 60) % h;
         const flick = 0.5 + 0.5 * Math.sin((t + i) * 4 + (i % 7));
         const a = Math.max(0, Math.min(1, g.alpha * flick));
-        ctx.fillStyle = `rgba(230,230,230,${a})`;
+        // dark grains on white background
+        ctx.fillStyle = `rgba(0,0,0,${a})`;
         // draw small rectangle as grain
         ctx.fillRect(Math.floor(g.x), Math.floor(yy), Math.ceil(g.r), Math.ceil(g.r));
     }
 
-    // subtle full-screen noise overlay (very low alpha)
-    ctx.fillStyle = `rgba(255,255,255,${CONFIG.backgroundGlow * 0.02})`;
+    // subtle full-screen noise overlay (use overlayAlpha when provided)
+    const overlayA = typeof CONFIG.overlayAlpha === 'number' ? CONFIG.overlayAlpha : (CONFIG.backgroundGlow * 0.02);
+    ctx.fillStyle = `rgba(0,0,0,${Math.max(0, Math.min(1, overlayA))})`;
     ctx.fillRect(0, 0, w, h);
+
+    // Mask the header area so no grains ever appear between header and the right screen edge
+    // (prevents visible particles in any tiny gap due to scrollbars or rounding)
+    try {
+        const header = document.querySelector('header.site-header');
+        const hh = header ? header.offsetHeight : 0;
+        if (hh > 0) {
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, 0, w, Math.ceil(hh));
+        }
+    } catch (_) { /* ignore */ }
 
     t += 0.5;
     requestAnimationFrame(drawNoise);
@@ -226,6 +272,175 @@ function drawNoise() {
 window.addEventListener('resize', () => { generateGrains(); });
 generateGrains();
 drawNoise();
+
+/* ---------- AUTO SCROLL (customizable velocity) ---------- */
+const autoScrollState = {
+    running: false,
+    rafId: 0,
+    lastTs: 0,
+    pausedUntil: 0,
+    accumulatedY: 0  // accumulate fractional pixels until we can scroll by whole pixels
+};
+
+function autoScrollShouldRun() {
+    if (!(CONFIG.autoScroll && CONFIG.autoScroll.enabled)) return false;
+    // Don't scroll when the start overlay locks the UI
+    if (document.body.classList.contains('locked')) return false;
+    // Optionally suspend while any modal is open
+    if (CONFIG.autoScroll.disableWhenModalOpen && anyModalOpen()) return false;
+    // Pause temporarily after user input
+    if (Date.now() < autoScrollState.pausedUntil) return false;
+    return true;
+}
+
+function autoScrollStep(ts) {
+    if (!autoScrollState.running) return;
+    if (!autoScrollShouldRun()) {
+        autoScrollState.lastTs = ts;
+        autoScrollState.rafId = requestAnimationFrame(autoScrollStep);
+        return;
+    }
+
+    if (!autoScrollState.lastTs) autoScrollState.lastTs = ts;
+    const dt = Math.max(0, ts - autoScrollState.lastTs);
+    autoScrollState.lastTs = ts;
+
+    const speed = Math.max(0, CONFIG.autoScroll.speedPxPerSec || 0);
+    const dy = (speed * dt) / 1000; // pixels per frame based on dt
+
+    // Use the canonical scrolling element for reliability across browsers
+    const scroller = document.scrollingElement || document.documentElement || document.body;
+    const prevY = scroller.scrollTop || 0;
+    
+    // Accumulate fractional pixels until we have at least 1 pixel to scroll
+    autoScrollState.accumulatedY += dy;
+    const scrollAmount = Math.floor(autoScrollState.accumulatedY);
+    
+    if (scrollAmount >= 1) {
+        scroller.scrollTop = prevY + scrollAmount;
+        autoScrollState.accumulatedY -= scrollAmount; // keep the remainder for next frame
+    }
+    
+    const newY = scroller.scrollTop || 0;
+    
+    // Debug: log scroll progress occasionally
+    if (Math.random() < 0.01) console.log('Auto-scroll: from', prevY, 'to', newY, 'accumulated:', autoScrollState.accumulatedY.toFixed(2), 'scrollAmount:', scrollAmount);
+
+    const atBottom = (scroller.clientHeight + Math.ceil(newY)) >= scroller.scrollHeight;
+    const didnMove = Math.abs(newY - prevY) < 0.5; // guard for overscroll/OS behavior
+
+    if ((atBottom || didnMove) && CONFIG.autoScroll.loopToTop) {
+        // Use a broadly compatible jump-to-top
+    scroller.scrollTop = 0;
+    }
+
+    autoScrollState.rafId = requestAnimationFrame(autoScrollStep);
+}
+
+function startAutoScroll() {
+    if (autoScrollState.running) return;
+    autoScrollState.running = true;
+    autoScrollState.lastTs = 0;
+    autoScrollState.accumulatedY = 0; // reset accumulator
+    // Debug: log scroll capabilities
+    console.log('Starting auto-scroll. Page scroll height:', document.documentElement.scrollHeight, 'Window height:', window.innerHeight);
+    autoScrollState.rafId = requestAnimationFrame(autoScrollStep);
+}
+
+function stopAutoScroll() {
+    if (!autoScrollState.running) return;
+    autoScrollState.running = false;
+    if (autoScrollState.rafId) cancelAnimationFrame(autoScrollState.rafId);
+    autoScrollState.rafId = 0;
+}
+
+// Pause on user interaction (wheel/touch/keys)
+function pauseAutoScrollOnUser(e) {
+    if (!(CONFIG.autoScroll && CONFIG.autoScroll.enabled)) return;
+    // Don't pause when the user presses Space if we use it to toggle play/pause
+    if (e && e.type === 'keydown' && (e.code === 'Space' || e.key === ' ')) return;
+    autoScrollState.pausedUntil = Date.now() + (CONFIG.autoScroll.pauseAfterUserMs || 0);
+}
+['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(ev => {
+    window.addEventListener(ev, pauseAutoScrollOnUser, { passive: true });
+});
+
+// Start after Start button (overlay dismissed). If no overlay, start on load.
+try {
+    if (startBtn) {
+        startBtn.addEventListener('click', () => {
+            if (CONFIG.autoScroll && CONFIG.autoScroll.enabled) startAutoScroll();
+        });
+    } else {
+    // No overlay present
+    if (CONFIG.autoScroll && CONFIG.autoScroll.enabled) startAutoScroll();
+    }
+} catch (_) {}
+
+// Also attempt to start on window load to be resilient (will idle if locked)
+window.addEventListener('load', () => {
+    try {
+        if (CONFIG.autoScroll && CONFIG.autoScroll.enabled && !autoScrollState.running) startAutoScroll();
+    } catch (_) {}
+});
+// Fallback: try again shortly after load to ensure layout is ready
+setTimeout(() => {
+    try {
+        if (CONFIG.autoScroll && CONFIG.autoScroll.enabled && !autoScrollState.running) startAutoScroll();
+    } catch (_) {}
+}, 600);
+
+// Helper: detect if page can scroll
+function isPageScrollable() {
+    const sh = document.documentElement.scrollHeight || document.body.scrollHeight || 0;
+    return sh > (window.innerHeight + 1);
+}
+
+// Space bar: toggle play/stop
+window.addEventListener('keydown', (e) => {
+    if (e.code === 'Space' || e.key === ' ') {
+        // Ignore when typing in inputs/textareas or contentEditable elements
+        const el = e.target;
+        const tag = (el && el.tagName) ? el.tagName.toLowerCase() : '';
+        if (tag === 'input' || tag === 'textarea' || (el && el.isContentEditable)) return;
+        // Prevent page from jumping
+        e.preventDefault();
+        // If video modal is open, toggle video playback; otherwise toggle auto-scroll
+        try {
+            if (videoModal && videoModal.classList.contains('open')) {
+                if (player.paused) {
+                    player.play().catch(() => {});
+                } else {
+                    player.pause();
+                }
+                return;
+            }
+        } catch (_) {}
+
+        if (autoScrollState.running) {
+            stopAutoScroll();
+        } else if (CONFIG.autoScroll && CONFIG.autoScroll.enabled) {
+            startAutoScroll();
+        }
+    }
+}, { passive: false });
+
+// Capture-phase fallback to reliably detect Space across nested elements
+document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space' || e.key === ' ') {
+        const el = e.target;
+        const tag = (el && el.tagName) ? el.tagName.toLowerCase() : '';
+        if (tag === 'input' || tag === 'textarea' || (el && el.isContentEditable)) return;
+        e.preventDefault();
+        try {
+            if (videoModal && videoModal.classList.contains('open')) {
+                if (player.paused) { player.play().catch(() => {}); } else { player.pause(); }
+                return;
+            }
+        } catch (_) {}
+    if (autoScrollState.running) { stopAutoScroll(); } else if (CONFIG.autoScroll && CONFIG.autoScroll.enabled) { startAutoScroll(); }
+    }
+}, { passive: false, capture: true });
 /* ---------- CARD GENERATION ---------- */
 // Shuffle projects each load so card order is random (Fisher-Yates)
 function shuffleArray(arr) {
@@ -355,7 +570,7 @@ function openMap(opts = {}) {
                 schedulePane.classList.add('open');
             }
         } else {
-            schedulePane?.classList.remove('open');
+            if (schedulePane) schedulePane.classList.remove('open');
         }
     } catch (_) {}
     // If the map is opened from inside the video modal, fade the video's volume down
@@ -398,7 +613,7 @@ if (openScheduleBtn) openScheduleBtn.addEventListener('click', () => {
 });
 if (openMapViewBtn) openMapViewBtn.addEventListener('click', () => {
     playSound(clickSound);
-    schedulePane?.classList.remove('open');
+    if (schedulePane) schedulePane.classList.remove('open');
 });
 
 function renderSchedule() {
@@ -463,7 +678,7 @@ function openVideo(card) {
     const mapBtn = document.createElement('button');
     mapBtn.type = 'button';
     mapBtn.className = 'tag map-btn';
-    mapBtn.textContent = 'Mapa';
+    mapBtn.textContent = 'mapa';
     // Open map from video: default to map view, and fade video volume
     mapBtn.onclick = (e) => { e.stopPropagation(); openMap({ fromVideo: true, defaultView: 'map' }); };
     tagContainer.appendChild(mapBtn);
@@ -668,7 +883,7 @@ function getClipVolume(card) {
     // 2) If a card has a per-clip volume, it overrides the global (except rule 3).
     // 3) If SETTINGS.videoVol === 0, force total silence regardless of per-clip.
     if (SETTINGS.videoVol === 0) return 0;
-    const clip = parseFloat(card?.dataset?.volume ?? '');
+    const clip = parseFloat((card && card.dataset && card.dataset.volume != null) ? card.dataset.volume : '');
     const hasClip = !Number.isNaN(clip);
     const base = hasClip ? clip : SETTINGS.videoVol;
     return clamp01(base);
