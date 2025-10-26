@@ -112,13 +112,15 @@ html,
 body {
   height: 100%;
   margin: 0;
-  background: var(--bg);
-  color: #fff;
-  font-family: 'Red Hat Display', sans-serif;
+  /* Use map texture instead of flat black */
+  background: white;
+  color: black;
+  font-family: 'Creato Display', sans-serif;
   /* Use normal block flow so header doesn't appear in the middle while content loads */
   display: block;
   /* Allow scrolling when there are many cards */
-  overflow: auto;
+  overflow-x: hidden; /* prevent any horizontal bleed (e.g., canvas rounding) */
+  overflow-y: auto;
   -webkit-overflow-scrolling: touch; /* smooth iOS scrolling */
   /* Hide stray text caret that can appear after modal interactions */
   caret-color: transparent;
@@ -139,21 +141,19 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;  /* ensure full viewport coverage */
+  height: 100vh;
   z-index: 0;
   /* Do not intercept clicks or scroll */
   pointer-events: none;
-  /*background: 
-    url("img/background.png") no-repeat center center / 100%,
-    radial-gradient(circle at center, #0b0b0d 0%, #010104 100%);*/
 }
 
 /* Header bar in document flow (not overlay). Three parts: left buttons, center title, right button */
 header.site-header {
-  position: relative;
+  position: sticky; /* stay visible when scrolling */
+  top: 0;
   /* stay in flow */
-  z-index: 30;
+  z-index: 40;
   width: 100%;
   display: flex;
   align-items: center;
@@ -161,6 +161,8 @@ header.site-header {
   gap: 12px;
   padding: 12px 16px;
   box-sizing: border-box;
+  /* Keep header readable – stays solid; not replaced with map */
+  background: white;
 }
 
 .header-left,
@@ -187,19 +189,43 @@ header.site-header {
 main {
   padding-top: 0;
   /* header is in flow, so no extra top padding needed */
+  /* Show animated canvas behind cards; keep text readable */
+  background: transparent;
+  color: #000;
+  /* Ensure main has enough height to create scrollable content */
+  min-height: calc(100vh + 500px);
 }
 
 .ambient-toggle,
 .start-btn,
 .close-btn {
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #fff;
+  border: 1px solid black;
+  color: black;
   padding: 10px 16px;
   border-radius: 8px;
   cursor: pointer;
-  font-family: 'Red Hat Display', sans-serif;
+  font-family: 'Creato Display', sans-serif;
 }
+
+/* Keep the main header map button at a fixed height across screen sizes */
+#openMapBtn {
+  display: inline-flex;
+  align-items: center;
+  height: 40px;        /* fixed height */
+  padding: 0 16px;     /* horizontal padding only */
+  font-size: 14px;     /* stable font size */
+  line-height: 1;      /* avoid vertical growth */
+  white-space: nowrap; /* keep label in one line */
+}
+
+.ambient-toggle:hover,
+.start-btn:hover,
+.close-btn:hover {
+  background: rgba(255, 0, 238, 0.18);
+}
+
+/* (Removed header overrides) header stays on dark background; default button styles apply */
 
 .grid {
   /* Grid/Flex help: we use CSS Grid for a strict number of columns per breakpoint.
@@ -209,7 +235,7 @@ main {
   gap: var(--grid-gap);
   align-items: start;
   width: 100%;
-  padding: 24px;
+  padding: 24px 24px 600px 24px; /* extra bottom padding for scroll space */
   box-sizing: border-box;
   z-index: 5;
   max-width: 1600px;
@@ -226,7 +252,7 @@ main {
   position: relative;
   cursor: pointer;
   transition: transform 220ms, box-shadow 220ms;
-  background: #000;
+  background: white;
   /* black background until media loads */
   aspect-ratio: 1 / 1;
   /* keep square cards */
@@ -245,7 +271,8 @@ main {
   object-fit: cover;
   border-radius: 0;
   /* card provides rounding */
-  background: #000;
+  /* Use map texture instead of flat black while image loads */
+  background: black;
   /* keep black while loading */
   opacity: 0;
   /* hide until the real image has loaded */
@@ -267,11 +294,11 @@ main {
   padding: 8px 10px 10px;
   color: #fff;
   text-align: center;
-  font-family: 'Red Hat Display', sans-serif;
+  font-family: 'Creato Display', sans-serif;
   font-size: clamp(12px, 1.5vw, 12px);
   font-weight: 600;
   letter-spacing: 0.2px;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.0));
+  /*background: linear-gradient(to top, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.0));*/
   opacity: 0;
   transform: translateY(6px);
   transition: opacity 160ms ease, transform 180ms ease;
@@ -292,7 +319,7 @@ main {
   display: none;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.75);
   z-index: 60;
 }
 
@@ -305,12 +332,12 @@ main {
   flex-direction: column;
   align-items: stretch;
   /* prevent centering while video loads */
-  width: min(80vw, 1200px);
-  /* reserve final width immediately */
+  /* reserve final width via a cap; let content size naturally */
+  max-width: 80vw;
   height: auto;
-  width: auto;
   /* object-fit: contain; */
-  background: #000;
+  /* Use map texture with a subtle dark veil for readability */
+  background:white;
   border-radius: 8px;
   overflow: hidden;
   /*position: relative;*/
@@ -328,13 +355,13 @@ main {
   flex-direction: column;
   align-items: stretch;
   justify-content: center;
-  background: #000;
+  /* Map panel uses map texture with veil */
+  background:
+    linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
+    url('img/map.png') center center / cover no-repeat;
   border-radius: 8px;
-  overflow: visible; /* allow close button to sit slightly outside */
+  overflow: hidden; /* contain footer/buttons; close X is fixed to viewport */
   box-shadow: 0 0 40px rgba(0, 230, 255, 0.2);
-  /* Slightly larger than the original, but not near full-screen */
-  max-width: 90vw;  /* base cap — media queries adjust a bit up */
-  max-height: 84vh; /* base height */
 }
 
 .map-body {
@@ -342,10 +369,13 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 10px 0;
   box-sizing: border-box;
-  /* Base minimum height so the image can fully cover the panel */
-  min-height: 68vh;
+  /* Allow the body to take remaining space and leave room for the footer */
+  flex: 1 1 auto;
+  min-height: 0; /* critical for flex children to avoid overflow */
+  /* Prevent the image from overflowing outside the visible panel */
+  overflow: hidden;
+  color: black;
 }
 
 .map-image {
@@ -360,25 +390,26 @@ main {
 
 /* Orange tag-styled button that opens the map from the video info area */
 .tag.map-btn {
-  background: rgba(255, 149, 0, 0.18);
-  border: 1px solid rgba(255, 149, 0, 0.4);
-  color: #fff;
+  background: rgba(0, 255, 60, 0.18);
+  border: 1px solid rgba(0, 255, 60, 0.4);
+  color: black;
   /* keep text white for contrast */
 }
 
 .tag.map-btn:hover {
-  background: rgba(255, 149, 0, 0.35);
+  background: rgba(0, 255, 60, 0.35);
 }
 
 /* Info modal layout */
 .info-frame {
   position: relative;
-  background: #070707;
-  color: #fff;
+  background: white;
+  color: black;
   border-radius: 10px;
   padding: 20px 22px 24px;
   width: min(720px, 92vw);
   box-shadow: 0 0 40px rgba(0, 230, 255, 0.2);
+  max-width: 70%;
 }
 
 .info-frame h2 {
@@ -403,9 +434,7 @@ main {
   padding: 16px;
   overflow-y: auto;
   /* Show the old map.png as a subtle background behind the schedule text */
-  background:
-    linear-gradient(rgba(0,0,0,0.78), rgba(0,0,0,0.78)),
-    url('img/map.png') center center / cover no-repeat;
+  background:white;
   display: none; /* toggled on via JS */
 }
 .schedule-pane.open { display: block; }
@@ -421,30 +450,38 @@ main {
   align-items: center;
   column-gap: 10px;
   row-gap: 8px;
-  padding: 10px;
+  padding: 12px 10px 16px; /* extra bottom padding so buttons aren't clipped */
   border-top: 1px solid rgba(255,255,255,0.1);
   flex-wrap: wrap; /* allow wrapping on very small screens */
   width: 100%;
   box-sizing: border-box;
-  overflow: hidden; /* keep children within the frame width */
+  overflow: visible; /* allow full button borders to render */
+  background: white;
+  position: sticky; /* keep footer visible inside the panel */
+  bottom: 0;
+  z-index: 2;
 }
+
 .map-action {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #fff;
-  padding: clamp(8px, 1.4vw, 12px) clamp(10px, 2vw, 16px);
+  background: white;
+  border: 1px solid black;
+  color: black;
+  padding: 10px 16px;     /* fixed padding to keep height consistent */
   border-radius: 8px;
   cursor: pointer;
-  font-family: 'Red Hat Display', sans-serif;
-  font-size: clamp(12px, 2.6vw, 16px);
+  font-family: 'Creato Display', sans-serif;
+  font-size: 14px;        /* fixed font size */
   line-height: 1.2;
-  white-space: normal; /* allow wrapping if needed */
+  white-space: normal;    /* allow wrapping if needed */
   text-align: center;
   max-width: 100%;
   flex: 1 1 calc(50% - 10px); /* two columns by default */
-  min-width: 140px; /* avoid too tiny buttons */
+  min-width: 140px;       /* avoid too tiny buttons */
 }
-.map-action:hover { background: rgba(255,255,255,0.06); }
+
+.map-action:hover { background: rgba(255, 0, 238, 0.18);}
+
+.map-action:hover button { color: black }
 
 /* Stack footer buttons on narrow screens to avoid overflow */
 @media (max-width: 520px) {
@@ -457,7 +494,8 @@ main {
   max-height: 70vh;
   aspect-ratio: auto;
   /* reserve space so layout doesn't jump */
-  background: #000;
+  /* Keep the video player background solid black */
+  background: black;
   /* black placeholder while hidden */
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   transition: opacity 0.4s;
@@ -471,7 +509,10 @@ main {
 .fade-overlay {
   position: fixed;
   inset: 0;
-  background: #000;
+  /* Fade overlay now uses a dark veil over map */
+  background:
+    linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)),
+    url('img/map.png') center center / cover no-repeat;
   animation: fadeIn 0.4s forwards;
   z-index: 200;
 }
@@ -508,8 +549,8 @@ main {
   width: 100%;
   height: auto;
   /* don't stretch to full frame height */
-  background: rgba(0, 0, 0, 0.55);
-  color: white;
+  background: white;
+  color: black;
   text-align: left;
   padding: 16px 20px;
   font-size: 14px;
@@ -521,7 +562,7 @@ main {
 .video-info h2 {
   margin: 0 0 4px;
   font-size: 18px;
-  font-family: 'Red Hat Display', sans-serif;
+  font-family: 'Creato Display', sans-serif;
   font-weight: bold;
 }
 
@@ -532,6 +573,11 @@ main {
   margin-top: 8px;
 }
 
+/* Push the Mapa tag button to the far right within the info bar */
+.tag-container .map-btn {
+  margin-left: auto;
+}
+
 .tag {
   background: rgba(0, 230, 255, 0.15);
   border: 1px solid rgba(0, 230, 255, 0.3);
@@ -540,7 +586,7 @@ main {
   cursor: pointer;
   font-size: 13px;
   transition: background 0.2s;
-  font-family: 'Red Hat Display', sans-serif;
+  font-family: 'Creato Display', sans-serif;
 }
 
 .tag:hover {
@@ -553,7 +599,6 @@ body::before {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  /*background: url("./img/background.png") repeat;*/
   opacity: 0.10;
   z-index: 1;
   mix-blend-mode: overlay;
@@ -565,8 +610,8 @@ body::before {
   top: 10px;
   right: 10px;
   border: none;
-  background: rgba(0, 0, 0, 0.6);
-  color: #fff;
+  background: white;
+  color: black;
   font-size: 18px;
   border-radius: 50%;
   width: 32px;
@@ -575,10 +620,14 @@ body::before {
   z-index: 80;
 }
 
-/* Position the mapModal close button just outside the frame corner */
-#mapModal .close-btn {
-  top: -12px;
-  right: -12px;
+/* Close buttons fixed at viewport top-right for all modals */
+.video-modal .close-btn,
+#mapModal .close-btn,
+#infoModal .close-btn {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 300;
 }
 
 .close-btn h2{
@@ -599,10 +648,12 @@ body::before {
 
 .start-overlay p{
   margin: 0px 0px 12px 0px;
+  color: black;
 }
 
 .start-overlay h2{
   margin: 0px 0px px 0px;
+  color: black;
 }
 
 /* While locked (before pressing Start), hide the page UI so the overlay sits only above the background canvas */
@@ -629,9 +680,7 @@ body.app-loading main {
     --grid-gap: 10px;
   }
 
-  .video-frame {
-    width: 92vw;
-  }
+  .video-frame { max-width: 80vw; }
 
   #player {
     max-height: 60vh;
@@ -639,7 +688,11 @@ body.app-loading main {
 
   /* Map/Schedule panel on phones: keep width, just a bit taller (not full) */
   .map-frame { max-width: 92vw; max-height: 88vh; }
-  .map-body { min-height: 76vh; }
+  .map-body { min-height: 0; }
+
+  /* Replace header Mapa y Programación text with an icon on mobile */
+  #openMapBtn { font-size: 0; padding: 0 14px; }
+  #openMapBtn::after { content: "⛛"; font-size: 18px; color: inherit; }
 }
 
 /* Tablets: 4 columns */
@@ -652,13 +705,11 @@ body.app-loading main {
     --grid-gap: 14px;
   }
 
-  .video-frame {
-    width: 86vw;
-  }
+  .video-frame { max-width: 80vw; }
 
-  /* Map/Schedule panel on tablets: a little larger (still not full) */
-  .map-frame { max-width: 92vw; max-height: 86vh; }
-  .map-body { min-height: 72vh; }
+  /* Map/Schedule panel on tablets: 70% width; body flexes, footer always visible */
+  .map-frame { width: 70vw; max-height: 86vh; }
+  .map-body { min-height: 0; }
 }
 
 /* Desktops and larger: 8 columns (max) */
@@ -671,9 +722,9 @@ body.app-loading main {
     --grid-gap: 16px;
   }
 
-  /* Map/Schedule panel on desktops: a bit bigger than base */
-  .map-frame { max-width: 93vw; max-height: 88vh; }
-  .map-body { min-height: 74vh; }
+  /* Map/Schedule panel on desktops: 70% width; body flexes, footer always visible */
+  .map-frame { width: 60vw; max-height: 80vh; }
+  .map-body { min-height: 0; }
 }
 
 /* interactive area around cards for closing modal */
