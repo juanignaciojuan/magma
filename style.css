@@ -119,9 +119,11 @@ body {
   /* Use normal block flow so header doesn't appear in the middle while content loads */
   display: block;
   /* Allow scrolling when there are many cards */
-  overflow-x: hidden; /* prevent any horizontal bleed (e.g., canvas rounding) */
+  overflow-x: hidden;
+  /* prevent any horizontal bleed (e.g., canvas rounding) */
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch; /* smooth iOS scrolling */
+  -webkit-overflow-scrolling: touch;
+  /* smooth iOS scrolling */
   /* Hide stray text caret that can appear after modal interactions */
   caret-color: transparent;
 }
@@ -141,7 +143,8 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;  /* ensure full viewport coverage */
+  width: 100vw;
+  /* ensure full viewport coverage */
   height: 100vh;
   z-index: 0;
   /* Do not intercept clicks or scroll */
@@ -150,7 +153,8 @@ body {
 
 /* Header bar in document flow (not overlay). Three parts: left buttons, center title, right button */
 header.site-header {
-  position: sticky; /* stay visible when scrolling */
+  position: sticky;
+  /* stay visible when scrolling */
   top: 0;
   /* stay in flow */
   z-index: 40;
@@ -212,17 +216,28 @@ main {
 #openMapBtn {
   display: inline-flex;
   align-items: center;
-  height: 40px;        /* fixed height */
-  padding: 0 16px;     /* horizontal padding only */
-  font-size: 14px;     /* stable font size */
-  line-height: 1;      /* avoid vertical growth */
-  white-space: nowrap; /* keep label in one line */
+  height: 40px;
+  /* fixed height */
+  padding: 0 16px;
+  /* horizontal padding only */
+  font-size: 14px;
+  /* stable font size */
+  line-height: 1;
+  /* avoid vertical growth */
+  white-space: nowrap;
+  /* keep label in one line */
 }
 
-.ambient-toggle:hover,
-.start-btn:hover,
+.ambient-toggle:hover {
+  background: rgba(255, 60, 0, 0.3);
+}
+
+.start-btn:hover {
+  background: rgba(255, 60, 0, 0.3);
+}
+
 .close-btn:hover {
-  background: rgba(255, 0, 238, 0.18);
+  background: rgba(255, 60, 0, 0.2);
 }
 
 /* (Removed header overrides) header stays on dark background; default button styles apply */
@@ -235,7 +250,8 @@ main {
   gap: var(--grid-gap);
   align-items: start;
   width: 100%;
-  padding: 24px 24px 600px 24px; /* extra bottom padding for scroll space */
+  padding: 24px 24px 600px 24px;
+  /* extra bottom padding for scroll space */
   box-sizing: border-box;
   z-index: 5;
   max-width: 1600px;
@@ -260,7 +276,7 @@ main {
 
 .card:hover {
   transform: scale(1.05);
-  filter: drop-shadow(0 0 15px rgba(0, 230, 255, 0.45));
+  filter: drop-shadow(0 0 15px rgba(0, 149, 255, 0.35));
 }
 
 .card img {
@@ -337,11 +353,11 @@ main {
   height: auto;
   /* object-fit: contain; */
   /* Use map texture with a subtle dark veil for readability */
-  background:white;
+  background: white;
   border-radius: 8px;
   overflow: hidden;
   /*position: relative;*/
-  box-shadow: 0 0 40px rgba(0, 230, 255, 0.2);
+  box-shadow: 0 0 40px rgba(0, 149, 255, 0.35);
 }
 
 /* ==============================================
@@ -357,11 +373,12 @@ main {
   justify-content: center;
   /* Map panel uses map texture with veil */
   background:
-    linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
+    linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
     url('img/map.png') center center / cover no-repeat;
   border-radius: 8px;
-  overflow: hidden; /* contain footer/buttons; close X is fixed to viewport */
-  box-shadow: 0 0 40px rgba(0, 230, 255, 0.2);
+  overflow: hidden;
+  /* contain footer/buttons; close X is fixed to viewport */
+  box-shadow: 0 0 40px rgba(0, 149, 255, 0.35);
 }
 
 .map-body {
@@ -372,7 +389,8 @@ main {
   box-sizing: border-box;
   /* Allow the body to take remaining space and leave room for the footer */
   flex: 1 1 auto;
-  min-height: 0; /* critical for flex children to avoid overflow */
+  min-height: 0;
+  /* critical for flex children to avoid overflow */
   /* Prevent the image from overflowing outside the visible panel */
   overflow: hidden;
   color: black;
@@ -380,9 +398,12 @@ main {
 
 .map-image {
   display: block;
-  width: 100%;     /* fill the panel width */
-  height: 100%;    /* fill the panel height */
-  object-fit: cover; /* make the map cover the full panel */
+  width: 100%;
+  /* fill the panel width */
+  height: 100%;
+  /* fill the panel height */
+  object-fit: cover;
+  /* make the map cover the full panel */
 }
 
 /* Back button for map modal (top-left). Same size as close, arrow icon) */
@@ -390,14 +411,14 @@ main {
 
 /* Orange tag-styled button that opens the map from the video info area */
 .tag.map-btn {
-  background: rgba(0, 255, 60, 0.18);
-  border: 1px solid rgba(0, 255, 60, 0.4);
+  background: rgba(255, 60, 0, 0.15);
+  border: 1px solid rgba(255, 60, 0, 0.3);
   color: black;
   /* keep text white for contrast */
 }
 
 .tag.map-btn:hover {
-  background: rgba(0, 255, 60, 0.35);
+  background: rgba(255, 60, 0, 0.35);
 }
 
 /* Info modal layout */
@@ -408,7 +429,7 @@ main {
   border-radius: 10px;
   padding: 20px 22px 24px;
   width: min(720px, 92vw);
-  box-shadow: 0 0 40px rgba(0, 230, 255, 0.2);
+  box-shadow: 0 0 40px rgba(0, 149, 255, 0.35);
   max-width: 70%;
 }
 
@@ -422,11 +443,6 @@ main {
   line-height: 1.5;
 }
 
-.info-frame a {
-  color: #00e6ff;
-  text-decoration: underline;
-}
-
 /* Schedule pane inside map modal */
 .schedule-pane {
   position: absolute;
@@ -434,30 +450,56 @@ main {
   padding: 16px;
   overflow-y: auto;
   /* Show the old map.png as a subtle background behind the schedule text */
-  background:white;
-  display: none; /* toggled on via JS */
+  background: white;
+  display: none;
+  /* toggled on via JS */
 }
-.schedule-pane.open { display: block; }
-.schedule-list { display: flex; flex-direction: column; gap: 12px; }
-.schedule-item { text-align: left; }
-.schedule-item h3 { margin: 0 0 6px; font-size: 16px; }
-.schedule-item p { margin: 0; line-height: 1.5; font-size: 14px; }
+
+.schedule-pane.open {
+  display: block;
+}
+
+.schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.schedule-item {
+  text-align: left;
+}
+
+.schedule-item h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+}
+
+.schedule-item p {
+  margin: 0;
+  line-height: 1.5;
+  font-size: 14px;
+}
 
 /* Footer actions for map modal */
 .map-footer {
   display: flex;
-  justify-content: space-between; /* two actions at ends; adapts nicely */
+  justify-content: space-between;
+  /* two actions at ends; adapts nicely */
   align-items: center;
   column-gap: 10px;
   row-gap: 8px;
-  padding: 12px 10px 16px; /* extra bottom padding so buttons aren't clipped */
-  border-top: 1px solid rgba(255,255,255,0.1);
-  flex-wrap: wrap; /* allow wrapping on very small screens */
+  padding: 12px 10px 16px;
+  /* extra bottom padding so buttons aren't clipped */
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  flex-wrap: wrap;
+  /* allow wrapping on very small screens */
   width: 100%;
   box-sizing: border-box;
-  overflow: visible; /* allow full button borders to render */
+  overflow: visible;
+  /* allow full button borders to render */
   background: white;
-  position: sticky; /* keep footer visible inside the panel */
+  position: sticky;
+  /* keep footer visible inside the panel */
   bottom: 0;
   z-index: 2;
 }
@@ -466,26 +508,37 @@ main {
   background: white;
   border: 1px solid black;
   color: black;
-  padding: 10px 16px;     /* fixed padding to keep height consistent */
+  padding: 10px 16px;
+  /* fixed padding to keep height consistent */
   border-radius: 8px;
   cursor: pointer;
   font-family: 'Creato Display', sans-serif;
-  font-size: 14px;        /* fixed font size */
+  font-size: 14px;
+  /* fixed font size */
   line-height: 1.2;
-  white-space: normal;    /* allow wrapping if needed */
+  white-space: normal;
+  /* allow wrapping if needed */
   text-align: center;
   max-width: 100%;
-  flex: 1 1 calc(50% - 10px); /* two columns by default */
-  min-width: 140px;       /* avoid too tiny buttons */
+  flex: 1 1 calc(50% - 10px);
+  /* two columns by default */
+  min-width: 140px;
+  /* avoid too tiny buttons */
 }
 
-.map-action:hover { background: rgba(255, 0, 238, 0.18);}
+.map-action:hover {
+  background: rgba(255, 60, 0, 0.25);
+}
 
-.map-action:hover button { color: black }
+.map-action:hover button {
+  color: black
+}
 
 /* Stack footer buttons on narrow screens to avoid overflow */
 @media (max-width: 520px) {
-  .map-action { flex: 1 1 100%; }
+  .map-action {
+    flex: 1 1 100%;
+  }
 }
 
 #player {
@@ -511,7 +564,7 @@ main {
   inset: 0;
   /* Fade overlay now uses a dark veil over map */
   background:
-    linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)),
+    linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9)),
     url('img/map.png') center center / cover no-repeat;
   animation: fadeIn 0.4s forwards;
   z-index: 200;
@@ -630,7 +683,7 @@ body::before {
   z-index: 300;
 }
 
-.close-btn h2{
+.close-btn h2 {
   text-align: center;
 }
 
@@ -641,17 +694,18 @@ body::before {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: transparent; /* no dark veil — shows only over the background animation */
+  background: transparent;
+  /* no dark veil — shows only over the background animation */
   z-index: 50;
   text-align: center;
 }
 
-.start-overlay p{
+.start-overlay p {
   margin: 0px 0px 12px 0px;
   color: black;
 }
 
-.start-overlay h2{
+.start-overlay h2 {
   margin: 0px 0px px 0px;
   color: black;
 }
@@ -680,19 +734,35 @@ body.app-loading main {
     --grid-gap: 10px;
   }
 
-  .video-frame { max-width: 80vw; }
+  .video-frame {
+    max-width: 80vw;
+  }
 
   #player {
     max-height: 60vh;
   }
 
   /* Map/Schedule panel on phones: keep width, just a bit taller (not full) */
-  .map-frame { max-width: 92vw; max-height: 88vh; }
-  .map-body { min-height: 0; }
+  .map-frame {
+    max-width: 92vw;
+    max-height: 88vh;
+  }
+
+  .map-body {
+    min-height: 0;
+  }
 
   /* Replace header Mapa y Programación text with an icon on mobile */
-  #openMapBtn { font-size: 0; padding: 0 14px; }
-  #openMapBtn::after { content: "⛛"; font-size: 18px; color: inherit; }
+  #openMapBtn {
+    font-size: 0;
+    padding: 0 14px;
+  }
+
+  #openMapBtn::after {
+    content: "⛛";
+    font-size: 18px;
+    color: inherit;
+  }
 }
 
 /* Tablets: 4 columns */
@@ -705,11 +775,19 @@ body.app-loading main {
     --grid-gap: 14px;
   }
 
-  .video-frame { max-width: 80vw; }
+  .video-frame {
+    max-width: 80vw;
+  }
 
   /* Map/Schedule panel on tablets: 70% width; body flexes, footer always visible */
-  .map-frame { width: 70vw; max-height: 86vh; }
-  .map-body { min-height: 0; }
+  .map-frame {
+    width: 70vw;
+    max-height: 86vh;
+  }
+
+  .map-body {
+    min-height: 0;
+  }
 }
 
 /* Desktops and larger: 8 columns (max) */
@@ -723,8 +801,14 @@ body.app-loading main {
   }
 
   /* Map/Schedule panel on desktops: 70% width; body flexes, footer always visible */
-  .map-frame { width: 60vw; max-height: 80vh; }
-  .map-body { min-height: 0; }
+  .map-frame {
+    width: 60vw;
+    max-height: 80vh;
+  }
+
+  .map-body {
+    min-height: 0;
+  }
 }
 
 /* interactive area around cards for closing modal */
