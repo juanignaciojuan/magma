@@ -371,14 +371,19 @@ main {
   flex-direction: column;
   align-items: stretch;
   justify-content: center;
-  /* Map panel uses map texture with veil */
-  background:
+  /* Map panel uses map texture with veil - fits entire image without cropping */
+  background-image:
     linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
-    url('img/map.png') center center / cover no-repeat;
+    url('img/map.png');
+  background-position: center center;
+  background-size: contain;
+  background-repeat: no-repeat;
   border-radius: 8px;
   overflow: hidden;
   /* contain footer/buttons; close X is fixed to viewport */
   box-shadow: 0 0 40px rgba(0, 149, 255, 0.35);
+  /* Ensure minimum height for tall maps */
+  min-height: 70vh;
 }
 
 .map-body {
@@ -742,10 +747,10 @@ body.app-loading main {
     max-height: 60vh;
   }
 
-  /* Map/Schedule panel on phones: keep width, just a bit taller (not full) */
+  /* Map/Schedule panel on phones: keep width, increase height for full map visibility */
   .map-frame {
     max-width: 92vw;
-    max-height: 88vh;
+    max-height: 95vh;
   }
 
   .map-body {
@@ -779,10 +784,10 @@ body.app-loading main {
     max-width: 80vw;
   }
 
-  /* Map/Schedule panel on tablets: 70% width; body flexes, footer always visible */
+  /* Map/Schedule panel on tablets: 70% width; increased height for full map visibility */
   .map-frame {
     width: 70vw;
-    max-height: 86vh;
+    max-height: 92vh;
   }
 
   .map-body {
@@ -800,10 +805,10 @@ body.app-loading main {
     --grid-gap: 16px;
   }
 
-  /* Map/Schedule panel on desktops: 70% width; body flexes, footer always visible */
+  /* Map/Schedule panel on desktops: adjusted for full map visibility */
   .map-frame {
     width: 60vw;
-    max-height: 80vh;
+    max-height: 88vh;
   }
 
   .map-body {

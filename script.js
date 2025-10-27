@@ -40,7 +40,7 @@ const clickSound = new Audio("audio/click.mp3");
 clickSound.volume = SETTINGS.clickVol;
 
 // Path to your event map image (put your file at this path)
-const MAP_IMAGE_SRC = 'img/noise1.png';
+const MAP_IMAGE_SRC = 'img/map.png';
 const MAP_VIDEO_LOW_VOL = 0.02; // lower target so fade-down is clearly perceptible
 let mapOpenedFromVideo = false;
 let mapPrevVideoVol = null;
