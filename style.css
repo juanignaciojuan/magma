@@ -212,20 +212,9 @@ main {
   font-family: 'Creato Display', sans-serif;
 }
 
-/* Keep the main header map button at a fixed height across screen sizes */
-#openMapBtn {
-  display: inline-flex;
-  align-items: center;
-  height: 40px;
-  /* fixed height */
-  padding: 0 16px;
-  /* horizontal padding only */
-  font-size: 14px;
-  /* stable font size */
-  line-height: 1;
-  /* avoid vertical growth */
-  white-space: nowrap;
-  /* keep label in one line */
+.ambient-toggle:disabled {
+  opacity: 0.45;
+  cursor: default;
 }
 
 .ambient-toggle:hover {
@@ -257,6 +246,137 @@ main {
   max-width: 1600px;
   /* center the grid on large screens */
   margin: 0 auto;
+}
+
+.is-hidden {
+  display: none !important;
+}
+
+.back-button {
+  min-width: 88px;
+}
+
+.back-button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* Map and room views (full-page sections) */
+.map-page,
+.room-page {
+  padding: 28px 24px 32px;
+  box-sizing: border-box;
+  gap: 24px;
+  align-items: stretch;
+  display: none;
+}
+
+body.view-map .map-page,
+body.view-room .room-page {
+  display: flex;
+  flex-direction: column;
+}
+
+body.view-map .room-page,
+body.view-room .map-page,
+body:not(.view-map):not(.view-room) .map-page,
+body:not(.view-map):not(.view-room) .room-page {
+  display: none;
+}
+
+.map-page-header,
+.room-page-header {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.map-page-header h2,
+.room-page-header h2 {
+  margin: 0 0 8px 0;
+  font-size: clamp(22px, 3vw, 34px);
+}
+
+.map-page-header p,
+.room-page-header p {
+  margin: 0;
+  font-size: clamp(14px, 1.6vw, 16px);
+  line-height: 1.5;
+}
+
+.map-wrapper {
+  position: relative;
+  width: min(960px, 92vw);
+  margin: 0 auto;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 0 32px rgba(0, 0, 0, 0.18);
+  background: #f4f4f4;
+}
+
+.map-base {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.map-hotspots {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  font-family: 'Creato Display', sans-serif;
+}
+
+.map-room {
+  position: absolute;
+  pointer-events: auto;
+  border: 2px solid var(--room-color, rgba(0, 230, 255, 0.7));
+  background: var(--room-rest, rgba(0, 230, 255, 0.18));
+  color: #000;
+  border-radius: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+  font-size: clamp(13px, 1.4vw, 16px);
+  letter-spacing: 0.2px;
+}
+
+.map-room span {
+  pointer-events: none;
+}
+
+.map-room:hover,
+.map-room:focus-visible {
+  transform: translateY(-2px);
+  background: var(--room-hover, rgba(0, 230, 255, 0.42));
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.25);
+  outline: none;
+}
+
+.map-room:focus-visible {
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.35);
+}
+
+.map-room[data-empty="true"] {
+  opacity: 0.55;
+}
+
+.empty-room-message {
+  text-align: center;
+  font-size: 15px;
+  background: rgba(0, 0, 0, 0.04);
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin: 0 auto;
+  max-width: 540px;
+}
+
+.room-page .grid {
+  padding-top: 0;
 }
 
 .card {
@@ -360,61 +480,6 @@ main {
   box-shadow: 0 0 40px rgba(0, 149, 255, 0.35);
 }
 
-/* ==============================================
-  Map modal layout (reuses the same overlay)
-  Tip: tweak max-width / max-height here or via the
-  media queries below to adjust panel size by device.
-  ============================================== */
-.map-frame {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: center;
-  /* Map panel uses map texture with veil - fits entire image without cropping */
-  background-image:
-    linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
-    url('img/map.png');
-  background-position: center center;
-  background-size: contain;
-  background-repeat: no-repeat;
-  border-radius: 8px;
-  overflow: hidden;
-  /* contain footer/buttons; close X is fixed to viewport */
-  box-shadow: 0 0 40px rgba(0, 149, 255, 0.35);
-  /* Ensure minimum height for tall maps */
-  min-height: 70vh;
-}
-
-.map-body {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  /* Allow the body to take remaining space and leave room for the footer */
-  flex: 1 1 auto;
-  min-height: 0;
-  /* critical for flex children to avoid overflow */
-  /* Prevent the image from overflowing outside the visible panel */
-  overflow: hidden;
-  color: black;
-}
-
-.map-image {
-  display: block;
-  width: 100%;
-  /* fill the panel width */
-  height: 100%;
-  /* fill the panel height */
-  object-fit: cover;
-  /* make the map cover the full panel */
-}
-
-/* Back button for map modal (top-left). Same size as close, arrow icon) */
-/* (Back button removed by request) */
-
-/* Orange tag-styled button that opens the map from the video info area */
 .tag.map-btn {
   background: rgba(255, 60, 0, 0.15);
   border: 1px solid rgba(255, 60, 0, 0.3);
@@ -446,104 +511,6 @@ main {
 .info-frame p {
   margin: 8px 0;
   line-height: 1.5;
-}
-
-/* Schedule pane inside map modal */
-.schedule-pane {
-  position: absolute;
-  inset: 0;
-  padding: 16px;
-  overflow-y: auto;
-  /* Show the old map.png as a subtle background behind the schedule text */
-  background: white;
-  display: none;
-  /* toggled on via JS */
-}
-
-.schedule-pane.open {
-  display: block;
-}
-
-.schedule-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.schedule-item {
-  text-align: left;
-}
-
-.schedule-item h3 {
-  margin: 0 0 6px;
-  font-size: 16px;
-}
-
-.schedule-item p {
-  margin: 0;
-  line-height: 1.5;
-  font-size: 14px;
-}
-
-/* Footer actions for map modal */
-.map-footer {
-  display: flex;
-  justify-content: space-between;
-  /* two actions at ends; adapts nicely */
-  align-items: center;
-  column-gap: 10px;
-  row-gap: 8px;
-  padding: 12px 10px 16px;
-  /* extra bottom padding so buttons aren't clipped */
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  flex-wrap: wrap;
-  /* allow wrapping on very small screens */
-  width: 100%;
-  box-sizing: border-box;
-  overflow: visible;
-  /* allow full button borders to render */
-  background: white;
-  position: sticky;
-  /* keep footer visible inside the panel */
-  bottom: 0;
-  z-index: 2;
-}
-
-.map-action {
-  background: white;
-  border: 1px solid black;
-  color: black;
-  padding: 10px 16px;
-  /* fixed padding to keep height consistent */
-  border-radius: 8px;
-  cursor: pointer;
-  font-family: 'Creato Display', sans-serif;
-  font-size: 14px;
-  /* fixed font size */
-  line-height: 1.2;
-  white-space: normal;
-  /* allow wrapping if needed */
-  text-align: center;
-  max-width: 100%;
-  flex: 1 1 calc(50% - 10px);
-  /* two columns by default */
-  min-width: 140px;
-  /* avoid too tiny buttons */
-}
-
-.map-action:hover {
-  background: rgba(255, 60, 0, 0.25);
-}
-
-.map-action:hover button {
-  color: black
-}
-
-/* Stack footer buttons on narrow screens to avoid overflow */
-@media (max-width: 520px) {
-  .map-action {
-    flex: 1 1 100%;
-  }
 }
 
 #player {
@@ -680,7 +647,6 @@ body::before {
 
 /* Close buttons fixed at viewport top-right for all modals */
 .video-modal .close-btn,
-#mapModal .close-btn,
 #infoModal .close-btn {
   position: fixed;
   top: 12px;
@@ -747,27 +713,7 @@ body.app-loading main {
     max-height: 60vh;
   }
 
-  /* Map/Schedule panel on phones: keep width, increase height for full map visibility */
-  .map-frame {
-    max-width: 92vw;
-    max-height: 95vh;
-  }
-
-  .map-body {
-    min-height: 0;
-  }
-
   /* Replace header Mapa y Programación text with an icon on mobile */
-  #openMapBtn {
-    font-size: 0;
-    padding: 0 14px;
-  }
-
-  #openMapBtn::after {
-    content: "⛛";
-    font-size: 18px;
-    color: inherit;
-  }
 }
 
 /* Tablets: 4 columns */
@@ -784,15 +730,6 @@ body.app-loading main {
     max-width: 80vw;
   }
 
-  /* Map/Schedule panel on tablets: 70% width; increased height for full map visibility */
-  .map-frame {
-    width: 70vw;
-    max-height: 92vh;
-  }
-
-  .map-body {
-    min-height: 0;
-  }
 }
 
 /* Desktops and larger: 8 columns (max) */
@@ -805,15 +742,6 @@ body.app-loading main {
     --grid-gap: 16px;
   }
 
-  /* Map/Schedule panel on desktops: adjusted for full map visibility */
-  .map-frame {
-    width: 60vw;
-    max-height: 88vh;
-  }
-
-  .map-body {
-    min-height: 0;
-  }
 }
 
 /* interactive area around cards for closing modal */

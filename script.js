@@ -8,15 +8,18 @@ const startOverlay = document.getElementById('startOverlay');
 const canvas = document.getElementById('particleCanvas');
 const ctx = canvas.getContext('2d');
 const gallery = document.getElementById('gallery');
-// Map UI elements
-const openMapBtn = document.getElementById('openMapBtn');
-const mapModal = document.getElementById('mapModal');
-const closeMapBtn = document.getElementById('closeMap');
-const mapImage = document.getElementById('mapImage');
-const schedulePane = document.getElementById('schedulePane');
-const scheduleList = document.getElementById('scheduleList');
-const openScheduleBtn = document.getElementById('openScheduleBtn');
-const openMapViewBtn = document.getElementById('openMapViewBtn');
+// Map / Room navigation elements
+const backToStartBtn = document.getElementById('backToStartBtn');
+const backToMapBtn = document.getElementById('backToMapBtn');
+const mapPage = document.getElementById('mapPage');
+const roomPage = document.getElementById('roomPage');
+const mapBaseImage = document.getElementById('mapBaseImage');
+const mapHotspots = document.getElementById('mapHotspots');
+const roomTitleEl = document.getElementById('roomTitle');
+const roomDescriptionEl = document.getElementById('roomDescription');
+const roomEmptyMessage = document.getElementById('roomEmptyMessage');
+let currentView = 'start';
+let currentRoomId = null;
 // Info UI elements
 const openInfoBtn = document.getElementById('openInfoBtn');
 const infoModal = document.getElementById('infoModal');
@@ -41,31 +44,6 @@ clickSound.volume = SETTINGS.clickVol;
 
 // Path to your event map image (put your file at this path)
 const MAP_IMAGE_SRC = 'img/map.png';
-const MAP_VIDEO_LOW_VOL = 0.02; // lower target so fade-down is clearly perceptible
-let mapOpenedFromVideo = false;
-let mapPrevVideoVol = null;
-let playerVolFadeInterval = null;
-
-function fadePlayerVolume(toVol, duration = 300) {
-    try {
-        if (playerVolFadeInterval) clearInterval(playerVolFadeInterval);
-        const start = Math.max(0, Math.min(1, player.volume || 0));
-        const target = Math.max(0, Math.min(1, toVol));
-        const steps = Math.max(1, Math.round(duration / 30));
-        const step = (target - start) / steps;
-        let n = 0;
-        playerVolFadeInterval = setInterval(() => {
-            n++;
-            const v = start + step * n;
-            player.volume = Math.max(0, Math.min(1, v));
-            if (n >= steps) {
-                player.volume = target;
-                clearInterval(playerVolFadeInterval);
-                playerVolFadeInterval = null;
-            }
-        }, 30);
-    } catch (_) { /* ignore */ }
-}
 
 // For mobile autoplay policies: create an AudioContext to unlock audio on first gesture
 let audioCtx = null;
@@ -127,8 +105,8 @@ startBtn.addEventListener('click', () => {
     ambient.volume = SETTINGS.ambientVol;
     ambientOn = true;
     toggleAmbient.textContent = '♫';
-        startOverlay.style.display = 'none';
-        try { document.body.classList.remove('locked'); } catch (_) {}
+    hideStartOverlay();
+    setView('map');
 });
 
 // One-time unlock for audio on first pointer interaction (improves mobile)
@@ -137,7 +115,7 @@ function unlockAudioOnFirstGesture() {
     if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
     // Also kick off auto-scroll on first user gesture if enabled
     try {
-        if (CONFIG.autoScroll && CONFIG.autoScroll.enabled && !autoScrollState.running) startAutoScroll();
+        if (CONFIG.autoScroll && CONFIG.autoScroll.enabled && currentView === 'room' && !autoScrollState.running) startAutoScroll();
     } catch (_) {}
     document.removeEventListener('pointerdown', unlockAudioOnFirstGesture);
 }
@@ -215,6 +193,80 @@ if (typeof CONFIG.autoScroll === 'undefined') {
     };
 }
 
+/* ---------- ROOM DEFINITIONS (placeholder layout) ---------- */
+const ROOM_DEFINITIONS = [
+    {
+        id: 'room-colectivo',
+        title: 'Sala Colectivo',
+        shortLabel: '_colectivo',
+        description: 'Acciones performáticas y piezas centradas en el sonido.',
+        area: { top: '8%', left: '8%', width: '28%', height: '32%' },
+        color: 'rgba(255, 60, 0, 0.7)',
+        restColor: 'rgba(255, 60, 0, 0.18)',
+        hoverColor: 'rgba(255, 60, 0, 0.42)',
+        tags: ['performance', 'sonido']
+    },
+    {
+        id: 'room-planta',
+        title: 'Planta Baja',
+        shortLabel: 'planta baja',
+        description: 'Instalaciones y recorridos inmersivos.',
+        area: { top: '50%', left: '12%', width: '36%', height: '38%' },
+        color: 'rgba(0, 149, 255, 0.7)',
+        restColor: 'rgba(0, 149, 255, 0.18)',
+        hoverColor: 'rgba(0, 149, 255, 0.4)',
+        tags: ['instalacion', 'vr']
+    },
+    {
+        id: 'room-tapete',
+        title: 'Sala Tapete',
+        shortLabel: '_tapete',
+        description: 'Narrativas audiovisuales y piezas experimentales.',
+        area: { top: '24%', left: '52%', width: '32%', height: '34%' },
+        color: 'rgba(0, 200, 180, 0.74)',
+        restColor: 'rgba(0, 200, 180, 0.2)',
+        hoverColor: 'rgba(0, 200, 180, 0.46)',
+        tags: ['narrativa', 'video', 'color']
+    },
+    {
+        id: 'room-laboratorio',
+        title: 'Laboratorio',
+        shortLabel: 'laboratorio',
+        description: 'Animación, videojuegos y cruces con tecnología.',
+        area: { top: '60%', left: '58%', width: '30%', height: '32%' },
+        color: 'rgba(140, 0, 255, 0.7)',
+        restColor: 'rgba(140, 0, 255, 0.2)',
+        hoverColor: 'rgba(140, 0, 255, 0.46)',
+        tags: ['animación', 'videojuegos']
+    },
+    {
+        id: 'room-general',
+        title: 'Sala General',
+        shortLabel: 'general',
+        description: 'Todos los proyectos disponibles.',
+        area: { top: '10%', left: '72%', width: '20%', height: '18%' },
+        color: 'rgba(30, 30, 30, 0.75)',
+        restColor: 'rgba(30, 30, 30, 0.16)',
+        hoverColor: 'rgba(30, 30, 30, 0.42)',
+        tags: []
+    }
+];
+
+const ROOM_LOOKUP = ROOM_DEFINITIONS.reduce((acc, room) => {
+    acc[room.id] = room;
+    return acc;
+}, {});
+
+function getRoomProjects(room) {
+    if (!room) return projects.slice();
+    const list = Array.isArray(projects) ? projects.slice() : [];
+    if (!room.tags || !room.tags.length) return list;
+    return list.filter(p => {
+        const tags = Array.isArray(p.tags) ? p.tags : [];
+        return room.tags.some(tag => tags.indexOf(tag) !== -1);
+    });
+}
+
 function generateGrains() {
     grains = [];
     const w = canvas.width;
@@ -283,6 +335,7 @@ const autoScrollState = {
 };
 
 function autoScrollShouldRun() {
+    if (currentView !== 'room') return false;
     if (!(CONFIG.autoScroll && CONFIG.autoScroll.enabled)) return false;
     // Don't scroll when the start overlay locks the UI
     if (document.body.classList.contains('locked')) return false;
@@ -339,6 +392,7 @@ function autoScrollStep(ts) {
 
 function startAutoScroll() {
     if (autoScrollState.running) return;
+    if (!autoScrollShouldRun()) return;
     autoScrollState.running = true;
     autoScrollState.lastTs = 0;
     autoScrollState.accumulatedY = 0; // reset accumulator
@@ -452,10 +506,21 @@ function shuffleArray(arr) {
     return a;
 }
 
-function buildGallery() {
+function buildGallery(roomId = null) {
+    if (!gallery) return;
     // clear existing
     gallery.innerHTML = '';
-    const shuffledProjects = shuffleArray(projects);
+
+    const room = roomId ? ROOM_LOOKUP[roomId] : null;
+    const sourceProjects = room ? getRoomProjects(room) : (Array.isArray(projects) ? projects.slice() : []);
+    if (!sourceProjects.length) {
+        if (roomEmptyMessage) roomEmptyMessage.hidden = false;
+        revealAppSoon();
+        return;
+    }
+    if (roomEmptyMessage) roomEmptyMessage.hidden = true;
+
+    const shuffledProjects = shuffleArray(sourceProjects);
     const frag = document.createDocumentFragment();
     shuffledProjects.forEach(p => {
         const card = document.createElement('div');
@@ -503,13 +568,15 @@ function buildGallery() {
             openVideo(card);
         });
     });
+
+    // Observe thumbnails for lazy loading after inserting into DOM
+    if (thumbObserver) {
+        gallery.querySelectorAll('.thumb').forEach(img => thumbObserver.observe(img));
+    }
 }
 
-// build initially
-buildGallery();
-
 // Lazy-load thumbnails and pre-measure video aspect ratios when thumbnails enter view
-const thumbObserver = new IntersectionObserver((entries) => {
+let thumbObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (!entry.isIntersecting) return;
         const img = entry.target;
@@ -533,16 +600,12 @@ const thumbObserver = new IntersectionObserver((entries) => {
     });
 }, { rootMargin: '200px' });
 
-// observe all thumbs
-document.querySelectorAll('.thumb').forEach(i => thumbObserver.observe(i));
-
 // reshuffle button
 const reshuffleBtn = document.getElementById('reshuffleBtn');
 if (reshuffleBtn) reshuffleBtn.addEventListener('click', () => {
+    if (currentView !== 'room') return;
     playSound(clickSound);
-    buildGallery();
-    // Re-observe all new thumbnails so they load and aspect ratios are measured
-    document.querySelectorAll('.thumb').forEach(i => thumbObserver.observe(i));
+    buildGallery(currentRoomId);
 });
 
     // After the gallery is built (or on next paint), remove the app-loading state
@@ -555,92 +618,140 @@ if (reshuffleBtn) reshuffleBtn.addEventListener('click', () => {
         } catch (_) {}
     }
 
-/* ---------- MAP MODAL ---------- */
-function openMap(opts = {}) {
-    playSound(clickSound);
-    // Load the map image and open the overlay
-    try { mapImage.src = MAP_IMAGE_SRC; } catch (_) {}
-    if (mapModal && !mapModal.classList.contains('open')) mapModal.classList.add('open');
-    // Set default view per caller: 'schedule' or 'map' (default 'map')
-    try {
-        const def = opts.defaultView === 'schedule' ? 'schedule' : 'map';
-        if (def === 'schedule') {
-            if (schedulePane) {
-                renderSchedule();
-                schedulePane.classList.add('open');
-            }
-        } else {
-            if (schedulePane) schedulePane.classList.remove('open');
-        }
-    } catch (_) {}
-    // If the map is opened from inside the video modal, fade the video's volume down
-    const fromVideo = !!opts.fromVideo;
-    if (fromVideo && videoModal && videoModal.classList.contains('open')) {
-        mapOpenedFromVideo = true;
-        try { mapPrevVideoVol = player.volume; } catch (_) { mapPrevVideoVol = null; }
-        if (typeof mapPrevVideoVol === 'number') fadePlayerVolume(MAP_VIDEO_LOW_VOL, 600);
+/* ---------- MAP NAVIGATION ---------- */
+if (mapBaseImage) {
+    mapBaseImage.src = MAP_IMAGE_SRC;
+}
+
+function hideStartOverlay() {
+    if (!startOverlay) return;
+    startOverlay.style.display = 'none';
+    document.body.classList.remove('locked');
+    document.body.classList.remove('app-loading');
+}
+
+function showStartOverlay() {
+    if (!startOverlay) return;
+    startOverlay.style.display = 'flex';
+    document.body.classList.add('locked');
+    if (roomTitleEl) roomTitleEl.textContent = '';
+    if (roomDescriptionEl) roomDescriptionEl.classList.add('is-hidden');
+    if (roomEmptyMessage) roomEmptyMessage.hidden = true;
+    setView('start');
+}
+
+function setView(view) {
+    currentView = view;
+    if (mapPage) mapPage.hidden = view !== 'map';
+    if (roomPage) roomPage.hidden = view !== 'room';
+    document.body.classList.toggle('view-map', view === 'map');
+    document.body.classList.toggle('view-room', view === 'room');
+    if (backToStartBtn) backToStartBtn.classList.toggle('is-hidden', view === 'start');
+    if (backToMapBtn) backToMapBtn.classList.toggle('is-hidden', view !== 'room');
+    if (reshuffleBtn) reshuffleBtn.disabled = view !== 'room';
+    if (view === 'room') {
+        if (CONFIG.autoScroll && CONFIG.autoScroll.enabled) startAutoScroll();
     } else {
-        mapOpenedFromVideo = false;
-    }
-    scheduleInactivity();
-}
-
-function closeMap(opts = {}) {
-    const silent = !!opts.silent;
-    if (!silent) playSound(clickSound);
-    // Clear image to free memory for big PNGs
-    try { mapImage.src = ''; } catch (_) {}
-    if (mapModal) mapModal.classList.remove('open');
-    // If we lowered the video's volume when opening the map, restore it smoothly
-    if (mapOpenedFromVideo && videoModal && videoModal.classList.contains('open')) {
-        if (typeof mapPrevVideoVol === 'number') fadePlayerVolume(mapPrevVideoVol, 250);
+        stopAutoScroll();
     }
 }
 
-// Header "map" opens with schedule as default view
-if (openMapBtn) openMapBtn.addEventListener('click', () => openMap({ defaultView: 'schedule' }));
-if (closeMapBtn) closeMapBtn.addEventListener('click', () => closeMap());
-if (mapModal) mapModal.addEventListener('click', (e) => {
-    if (e.target === mapModal) closeMap();
-});
-// Footer actions in map modal
-if (openScheduleBtn) openScheduleBtn.addEventListener('click', () => {
-    playSound(clickSound);
-    if (!schedulePane) return;
-    // Always open schedule view
-    try { renderSchedule(); } catch (_) {}
-    schedulePane.classList.add('open');
-});
-if (openMapViewBtn) openMapViewBtn.addEventListener('click', () => {
-    playSound(clickSound);
-    if (schedulePane) schedulePane.classList.remove('open');
-});
+function buildMapHotspots() {
+    if (!mapHotspots) return;
+    mapHotspots.innerHTML = '';
+    ROOM_DEFINITIONS.forEach(room => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'map-room';
+        btn.dataset.roomId = room.id;
+        btn.style.setProperty('--room-color', room.color || 'rgba(0, 230, 255, 0.7)');
+        if (room.restColor) btn.style.setProperty('--room-rest', room.restColor);
+        if (room.hoverColor) btn.style.setProperty('--room-hover', room.hoverColor);
+        const area = room.area || {};
+        if (area.top) btn.style.top = area.top;
+        if (area.left) btn.style.left = area.left;
+        if (area.width) btn.style.width = area.width;
+        if (area.height) btn.style.height = area.height;
+        if (room.cornerRadius) btn.style.borderRadius = room.cornerRadius;
+        const span = document.createElement('span');
+        span.textContent = room.shortLabel || room.title || room.id;
+        btn.appendChild(span);
+        const count = getRoomProjects(room).length;
+        if (!count) btn.dataset.empty = 'true';
+        const titleText = room.title || span.textContent || room.id;
+        const descriptive = count
+            ? `${titleText} – ${count} proyecto${count === 1 ? '' : 's'}`
+            : `${titleText} – sin proyectos asignados todavía`;
+        btn.title = descriptive;
+        btn.setAttribute('aria-label', descriptive);
 
-function renderSchedule() {
-    if (!scheduleList) return;
-    const items = Array.isArray(window.scheduleProjects) ? window.scheduleProjects : [];
-    // Only re-render if empty to avoid duplicates
-    if (scheduleList.childElementCount > 0) return;
-    const frag = document.createDocumentFragment();
-    items.forEach(it => {
-        const wrap = document.createElement('div');
-        wrap.className = 'schedule-item';
-        const h = document.createElement('h3');
-        h.textContent = it.title || '';
-        const p = document.createElement('p');
-        p.textContent = it.desc || '';
-        wrap.appendChild(h); wrap.appendChild(p);
-        frag.appendChild(wrap);
+        btn.addEventListener('pointerenter', (ev) => {
+            if (ev.pointerType === 'mouse') playSound(hoverSound);
+        }, { passive: true });
+        btn.addEventListener('click', () => {
+            playSound(clickSound);
+            enterRoom(room.id);
+        });
+
+        mapHotspots.appendChild(btn);
     });
-    // Fallback if no items available
-    if (!items.length) {
-        const p = document.createElement('p');
-        p.textContent = 'Próximamente: guía y cronograma.';
-        frag.appendChild(p);
-    }
-    scheduleList.innerHTML = '';
-    scheduleList.appendChild(frag);
 }
+
+function guessRoomIdForTags(tags) {
+    const arr = Array.isArray(tags) ? tags : [];
+    let fallback = null;
+    for (let i = 0; i < ROOM_DEFINITIONS.length; i++) {
+        const room = ROOM_DEFINITIONS[i];
+        if (!room.tags || !room.tags.length) {
+            if (!fallback) fallback = room.id;
+            continue;
+        }
+        const match = arr.some(tag => room.tags.indexOf(tag) !== -1);
+        if (match) return room.id;
+    }
+    return fallback;
+}
+
+function enterRoom(roomId) {
+    const room = ROOM_LOOKUP[roomId];
+    if (!room) return;
+    currentRoomId = roomId;
+    const projectCount = getRoomProjects(room).length;
+    if (roomTitleEl) {
+        const baseTitle = room.title || '';
+        roomTitleEl.textContent = projectCount
+            ? `${baseTitle} · ${projectCount} proyecto${projectCount === 1 ? '' : 's'}`
+            : `${baseTitle} · sin proyectos todavía`;
+    }
+    if (roomDescriptionEl) {
+        const desc = room.description || '';
+        roomDescriptionEl.textContent = desc;
+        roomDescriptionEl.classList.toggle('is-hidden', !desc);
+    }
+    buildGallery(roomId);
+    setView('room');
+}
+
+function leaveRoomToMap() {
+    currentRoomId = null;
+    if (roomEmptyMessage) roomEmptyMessage.hidden = true;
+    if (roomDescriptionEl) roomDescriptionEl.classList.add('is-hidden');
+    setView('map');
+}
+
+if (backToMapBtn) backToMapBtn.addEventListener('click', () => {
+    if (currentView !== 'room') return;
+    playSound(clickSound);
+    leaveRoomToMap();
+});
+
+if (backToStartBtn) backToStartBtn.addEventListener('click', () => {
+    playSound(clickSound);
+    currentRoomId = null;
+    showStartOverlay();
+});
+
+buildMapHotspots();
 
 /* ---------- INFO MODAL ---------- */
 function openInfo() {
@@ -678,9 +789,18 @@ function openVideo(card) {
     const mapBtn = document.createElement('button');
     mapBtn.type = 'button';
     mapBtn.className = 'tag map-btn';
-    mapBtn.textContent = 'mapa';
-    // Open map from video: default to map view, and fade video volume
-    mapBtn.onclick = (e) => { e.stopPropagation(); openMap({ fromVideo: true, defaultView: 'map' }); };
+    mapBtn.textContent = 'ver sala';
+    const roomForTags = guessRoomIdForTags(tags);
+    mapBtn.onclick = (e) => {
+        e.stopPropagation();
+        playSound(clickSound);
+        closeModal({ silent: true });
+        if (roomForTags) {
+            enterRoom(roomForTags);
+        } else {
+            setView('map');
+        }
+    };
     tagContainer.appendChild(mapBtn);
 
     const wasOpen = videoModal.classList.contains('open');
@@ -819,7 +939,6 @@ let inactivityTimer = null;
 
 function anyModalOpen() {
     return (videoModal && videoModal.classList.contains('open')) ||
-           (mapModal && mapModal.classList.contains('open')) ||
            (infoModal && infoModal.classList.contains('open'));
 }
 
@@ -828,7 +947,6 @@ function scheduleInactivity() {
     if (!anyModalOpen()) return;
     inactivityTimer = setTimeout(() => {
         if (videoModal && videoModal.classList.contains('open')) closeModal({ silent: true });
-        if (mapModal && mapModal.classList.contains('open')) closeMap({ silent: true });
     }, INACTIVITY_MS);
 }
 
