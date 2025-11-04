@@ -16,9 +16,10 @@
     <!-- Header bar in normal flow: left = controls, center = title, right = info button -->
     <header class="site-header">
         <div class="header-left">
+            <button id="backToStartBtn" class="ambient-toggle back-button is-hidden" title="Volver al inicio">← inicio</button>
+            <button id="backToMapBtn" class="ambient-toggle back-button is-hidden" title="Volver al mapa">← mapa</button>
             <button id="toggleAmbient" class="ambient-toggle" title="Ambient on/off">♫</button>
             <button id="reshuffleBtn" class="ambient-toggle" title="Reshuffle gallery">↻</button>
-            <button id="openMapBtn" class="ambient-toggle" title="Ver mapa del evento">Mapa y Programación</button>
         </div>
         <h1 class="site-title">Catálogo Magma 2025</h1>
         <div class="header-right">
@@ -27,7 +28,25 @@
     </header>
 
     <main>
-        <div class="grid" id="gallery"></div>
+        <section id="mapPage" class="view map-page" hidden>
+            <div class="map-page-header">
+                <h2>Mapa interactivo</h2>
+                <p>Elegí una sala para ver los proyectos que se muestran allí.</p>
+            </div>
+            <div class="map-wrapper">
+                <img id="mapBaseImage" class="map-base" alt="Mapa del evento" loading="lazy" />
+                <div id="mapHotspots" class="map-hotspots" aria-label="Salas del evento"></div>
+            </div>
+        </section>
+
+        <section id="roomPage" class="view room-page" hidden>
+            <div class="room-page-header">
+                <h2 id="roomTitle"></h2>
+                <p id="roomDescription" class="is-hidden"></p>
+            </div>
+            <div id="roomEmptyMessage" class="empty-room-message" hidden>No hay proyectos asignados a esta sala todavía.</div>
+            <div class="grid" id="gallery"></div>
+        </section>
     </main>
 
     <div class="video-modal" id="videoModal">
@@ -41,24 +60,6 @@
                 <h2 id="videoTitle"></h2>
                 <p id="videoDesc"></p>
                 <div id="videoTags" class="tag-container"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Map modal (shows a static PNG/JPG map). Click the X or the dark area to close. -->
-    <div class="video-modal" id="mapModal">
-        <div class="map-frame">
-            <button class="close-btn" id="closeMap">X</button>
-            <div class="map-body">
-                <img id="mapImage" class="map-image" alt="Mapa del evento" />
-                <!-- Hidden schedule pane that can be toggled from footer button -->
-                <div id="schedulePane" class="schedule-pane" aria-hidden="true">
-                    <div id="scheduleList" class="schedule-list"></div>
-                </div>
-            </div>
-            <div class="map-footer">
-                <button id="openScheduleBtn" class="map-action" title="Ver programación y guía">Programación</button>
-                <button id="openMapViewBtn" class="map-action" title="Volver a ver el mapa">Mapa</button>
             </div>
         </div>
     </div>
