@@ -23,6 +23,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 1",
     desc: "Exploración espacial. Exploración espacial. Exploración espacial. Exploración espacial. Exploración espacial. Exploración espacial. Exploración espacial. Exploración espacial. Exploración espacial. Exploración espacial. Exploración espacial. Exploración espacial.",
+    roomTag: "colectivo",
     tags: ["performance", "sonido", "instalacion"]
   },
   {
@@ -31,6 +32,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 2",
     desc: "Narrativa experimental. Narrativa experimental. Narrativa experimental. Narrativa experimental. Narrativa experimental. Narrativa experimental.",
+    roomTag: "colectivo",
     tags: ["narrativa", "color", "video"]
   },
   {
@@ -39,6 +41,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 3",
     desc: "Videoarte inmersivo",
+    roomTag: "colectivo",
     tags: ["sonido", "vr", "video"]
   },
   {
@@ -47,6 +50,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 4",
     desc: "Performance audiovisual",
+    roomTag: "circo",
     tags: ["vr", "narrativa", "instalacion"]
   },
   {
@@ -55,6 +59,7 @@ const projects = [
     volume: 0.1,
     title: "Proyecto 5",
     desc: "Instalación interactiva",
+    roomTag: "circo",
     tags: ["animación", "videojuegos", "sonido"]
   },
   {
@@ -63,6 +68,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 6",
     desc: "Película experimental",
+    roomTag: "circo",
     tags: ["vr", "animación", "videojuegos"]
   },
   {
@@ -71,6 +77,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 7",
     desc: "Experiencia sonora",
+    roomTag: "tapete",
     tags: ["videojuegos", "sonido", "instalacion"]
   },
   {
@@ -79,6 +86,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 8",
     desc: "Realidad aumentada",
+    roomTag: "tapete",
     tags: ["instalacion", "narrativa", "vr"]
   },
   {
@@ -87,6 +95,7 @@ const projects = [
     /*volume: 0.1,*/
     title: "Proyecto 9",
     desc: "Virtualidad inmersiva",
+    roomTag: "tapete",
     tags: ["videojuegos", "video", "performance"]
   },
   {
@@ -95,6 +104,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 10",
     desc: "Exploración de color y sonido",
+    roomTag: "laboratorio",
     tags: ["narrativa", "sonido", "video"]
   },
   {
@@ -103,6 +113,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 11",
     desc: "Estudio de formas y texturas",
+    roomTag: "laboratorio",
     tags: ["narrativa", "sonido", "animación"]
   },
   {
@@ -111,6 +122,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 12",
     desc: "Análisis de movimiento y ritmo",
+    roomTag: "laboratorio",
     tags: ["narrativa", "sonido", "vr"]
   },
   {
@@ -120,6 +132,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 13",
     desc: "Transformación digital",
+    roomTag: "general",
     tags: ["narrativa", "sonido", "performance"]
   },
   {
@@ -128,6 +141,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 14",
     desc: "Errorismo visual",
+    roomTag: "general",
     tags: ["narrativa", "sonido", "performance"]
   },
   {
@@ -136,6 +150,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 15",
     desc: "Pixel art contemporáneo",
+    roomTag: "general",
     tags: ["narrativa", "sonido", "performance"]
   },
   {
@@ -144,6 +159,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 16",
     desc: "Limites de la percepción",
+    roomTag: "general",
     tags: ["narrativa", "sonido", "animación"]
   },
   {
@@ -152,6 +168,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 17",
     desc: "Estudio de vínculos entre la tecnología y el cuerpo humano",
+    roomTag: "general",
     tags: ["narrativa", "sonido", "performance"]
   },
   {
@@ -160,6 +177,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 1",
     desc: "Exploración espacial. Exploración espacial. Exploración espacial. Exploración espacial. Exploración espacial. Exploración espacial. Exploración espacial. Exploración espacial. Exploración espacial. Exploración espacial. Exploración espacial. Exploración espacial.",
+    roomTag: "colectivo",
     tags: ["performance", "sonido", "instalacion"]
   },
   {
@@ -168,6 +186,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 2",
     desc: "Narrativa experimental. Narrativa experimental. Narrativa experimental. Narrativa experimental. Narrativa experimental. Narrativa experimental.",
+    roomTag: "colectivo",
     tags: ["narrativa", "color", "video"]
   },
   {
@@ -176,6 +195,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 3",
     desc: "Videoarte inmersivo",
+    roomTag: "colectivo",
     tags: ["sonido", "vr", "video"]
   },
   {
@@ -184,6 +204,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 4",
     desc: "Performance audiovisual",
+    roomTag: "circo",
     tags: ["vr", "narrativa", "instalacion"]
   },
   {
@@ -192,6 +213,7 @@ const projects = [
     volume: 0.1,
     title: "Proyecto 5",
     desc: "Instalación interactiva",
+    roomTag: "circo",
     tags: ["animación", "videojuegos", "sonido"]
   },
   {
@@ -200,6 +222,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 6",
     desc: "Película experimental",
+    roomTag: "circo",
     tags: ["vr", "animación", "videojuegos"]
   },
   {
@@ -208,6 +231,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 7",
     desc: "Experiencia sonora",
+    roomTag: "tapete",
     tags: ["videojuegos", "sonido", "instalacion"]
   },
   {
@@ -216,6 +240,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 8",
     desc: "Realidad aumentada",
+    roomTag: "tapete",
     tags: ["instalacion", "narrativa", "vr"]
   },
   {
@@ -224,6 +249,7 @@ const projects = [
     /*volume: 0.1,*/
     title: "Proyecto 9",
     desc: "Virtualidad inmersiva",
+    roomTag: "tapete",
     tags: ["videojuegos", "video", "performance"]
   },
   {
@@ -232,6 +258,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 10",
     desc: "Exploración de color y sonido",
+    roomTag: "laboratorio",
     tags: ["narrativa", "sonido", "video"]
   },
   {
@@ -240,6 +267,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 11",
     desc: "Estudio de formas y texturas",
+    roomTag: "laboratorio",
     tags: ["narrativa", "sonido", "animación"]
   },
   {
@@ -248,6 +276,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 12",
     desc: "Análisis de movimiento y ritmo",
+    roomTag: "laboratorio",
     tags: ["narrativa", "sonido", "vr"]
   },
   {
@@ -257,6 +286,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 13",
     desc: "Transformación digital",
+    roomTag: "general",
     tags: ["narrativa", "sonido", "performance"]
   },
   {
@@ -265,6 +295,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 14",
     desc: "Errorismo visual",
+    roomTag: "general",
     tags: ["narrativa", "sonido", "performance"]
   },
   {
@@ -273,6 +304,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 15",
     desc: "Pixel art contemporáneo",
+    roomTag: "general",
     tags: ["narrativa", "sonido", "performance"]
   },
   {
@@ -281,6 +313,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 16",
     desc: "Limites de la percepción",
+    roomTag: "general",
     tags: ["narrativa", "sonido", "animación"]
   },
   {
@@ -289,6 +322,7 @@ const projects = [
     /*volume: 0.5,*/
     title: "Proyecto 17",
     desc: "Estudio de vínculos entre la tecnología y el cuerpo humano",
+    roomTag: "general",
     tags: ["narrativa", "sonido", "performance"]
   },
   // add more objects freely - keep the same fields for bulk edits

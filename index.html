@@ -9,37 +9,69 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body class="locked app-loading">
+<body class="view-start">
     <!-- Moving pixel dust background -->
     <canvas id="particleCanvas"></canvas>
 
     <!-- Header bar in normal flow: left = controls, center = title, right = info button -->
     <header class="site-header">
         <div class="header-left">
-            <button id="backToStartBtn" class="ambient-toggle back-button is-hidden" title="Volver al inicio">← inicio</button>
-            <button id="backToMapBtn" class="ambient-toggle back-button is-hidden" title="Volver al mapa">← mapa</button>
+            <button id="goBackBtn" class="ambient-toggle back-button" title="Volver atrás">←</button>
             <button id="toggleAmbient" class="ambient-toggle" title="Ambient on/off">♫</button>
             <button id="reshuffleBtn" class="ambient-toggle" title="Reshuffle gallery">↻</button>
         </div>
-        <h1 class="site-title">Catálogo Magma 2025</h1>
+        <h1 class="site-title" id="siteTitle"><a href="#">Catálogo Magma 2025</a></h1>
         <div class="header-right">
-            <button id="openInfoBtn" class="ambient-toggle" title="Información">info</button>
+            <button id="backToMenuBtn" class="ambient-toggle back-button" title="Volver al menú">menu</button>
         </div>
     </header>
 
     <main>
-        <section id="mapPage" class="view map-page" hidden>
-            <div class="map-page-header">
-                <h2>Mapa interactivo</h2>
-                <p>Elegí una sala para ver los proyectos que se muestran allí.</p>
-            </div>
-            <div class="map-wrapper">
-                <img id="mapBaseImage" class="map-base" alt="Mapa del evento" loading="lazy" />
-                <div id="mapHotspots" class="map-hotspots" aria-label="Salas del evento"></div>
+        <section id="mainMenuPage" class="view main-menu-page">
+            <div class="menu-buttons">
+                <button id="goToMapBtn" class="menu-btn">Mapa</button>
+                <button id="goToScheduleBtn" class="menu-btn">Cronograma</button>
             </div>
         </section>
 
-        <section id="roomPage" class="view room-page" hidden>
+        <section id="chooseMapPage" class="view choose-map-page">
+            <div class="choose-map-options">
+                <button id="plantaAltaBtn" class="menu-btn map-choice-btn">Planta Alta</button>
+                <button id="plantaBajaBtn" class="menu-btn map-choice-btn">Planta Baja</button>
+            </div>
+        </section>
+
+        <section id="schedulePage" class="view schedule-page">
+            <div class="schedule-page-header">
+                <h2>Cronograma</h2>
+                <p>Este es el cronograma de eventos.</p>
+            </div>
+            <div id="scheduleContainer"></div>
+        </section>
+
+        <section id="plantaAltaMapPage" class="view map-page" data-map-view="planta-alta">
+            <div class="map-page-header">
+                <h2>Mapa · Planta Alta</h2>
+                <p>Explorá la planta alta y localizá las instalaciones disponibles.</p>
+            </div>
+            <div class="map-wrapper" data-map-view="planta-alta">
+                <img id="mapPlantaAltaImage" class="map-base" alt="Mapa planta alta" loading="lazy" />
+                <div id="mapPlantaAltaHotspots" class="map-hotspots" aria-label="Salas del evento"></div>
+            </div>
+        </section>
+
+        <section id="plantaBajaMapPage" class="view map-page" data-map-view="planta-baja">
+            <div class="map-page-header">
+                <h2>Mapa · Planta Baja</h2>
+                <p>Explorá la planta baja y encontrá las salas para ver los proyectos.</p>
+            </div>
+            <div class="map-wrapper" data-map-view="planta-baja">
+                <img id="mapPlantaBajaImage" class="map-base" alt="Mapa planta baja" loading="lazy" />
+                <div id="mapPlantaBajaHotspots" class="map-hotspots" aria-label="Salas del evento"></div>
+            </div>
+        </section>
+
+        <section id="roomPage" class="view room-page">
             <div class="room-page-header">
                 <h2 id="roomTitle"></h2>
                 <p id="roomDescription" class="is-hidden"></p>
