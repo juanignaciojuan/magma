@@ -290,7 +290,8 @@ body.view-schedule .schedule-page,
 body.view-menu .main-menu-page,
 body.view-chooseMap .choose-map-page,
 body.view-plantaAltaMap #plantaAltaMapPage,
-body.view-plantaBajaMap #plantaBajaMapPage {
+body.view-plantaBajaMap #plantaBajaMapPage,
+body.view-subsueloMap #subsueloMapPage {
   display: flex;
   flex-direction: column;
 }
@@ -300,7 +301,8 @@ body:not(.view-schedule) .schedule-page,
 body:not(.view-menu) .main-menu-page,
 body:not(.view-chooseMap) .choose-map-page,
 body:not(.view-plantaAltaMap) #plantaAltaMapPage,
-body:not(.view-plantaBajaMap) #plantaBajaMapPage {
+body:not(.view-plantaBajaMap) #plantaBajaMapPage,
+body:not(.view-subsueloMap) #subsueloMapPage {
   display: none;
 }
 
@@ -638,14 +640,18 @@ body:not(.view-plantaBajaMap) #plantaBajaMapPage {
   /* prevent centering while video loads */
   /* reserve final width via a cap; let content size naturally */
   max-width: 80vw;
+  max-height: calc(100vh - 160px);
+  max-height: calc(100dvh - 160px);
   height: auto;
   /* object-fit: contain; */
   /* Use map texture with a subtle dark veil for readability */
   background: white;
   border-radius: 8px;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
   /*position: relative;*/
-  box-shadow: 0 0 40px rgba(0, 149, 255, 0.35);
+  /*box-shadow: 0 0 40px rgba(0, 149, 255, 0.35);*/
 }
 
 .tag.map-btn {
@@ -683,7 +689,7 @@ body:not(.view-plantaBajaMap) #plantaBajaMapPage {
 #player {
   width: 100%;
   height: auto;
-  max-height: 70vh;
+  max-height: 60vh;
   aspect-ratio: auto;
   /* reserve space so layout doesn't jump */
   /* Keep the video player background solid black */
@@ -744,25 +750,33 @@ body:not(.view-plantaBajaMap) #plantaBajaMapPage {
   background: white;
   color: black;
   text-align: left;
-  padding: 16px 20px;
-  font-size: 14px;
+  padding: 12px 16px 16px;
+  font-size: 13px;
   box-sizing: border-box;
   font-family: 'Creato Display', sans-serif;
   font-weight: normal;
 }
 
 .video-info h2 {
-  margin: 0 0 4px;
-  font-size: 18px;
+  margin: 0 0 2px;
+  font-size: 16px;
   font-family: 'Creato Display', sans-serif;
   font-weight: bold;
+}
+
+.video-info h3 {
+  margin: 0 0 6px;
+  font-size: 14px;
+  font-family: 'Creato Display', sans-serif;
+  font-weight: normal;
+  color: #555;
 }
 
 .tag-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 6px;
+  margin-top: 6px;
 }
 
 /* Push the Mapa tag button to the far right within the info bar */
@@ -774,9 +788,9 @@ body:not(.view-plantaBajaMap) #plantaBajaMapPage {
   background: rgba(0, 230, 255, 0.15);
   border: 1px solid rgba(0, 230, 255, 0.3);
   border-radius: 6px;
-  padding: 4px 8px;
+  padding: 3px 6px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 12px;
   transition: background 0.2s;
   font-family: 'Creato Display', sans-serif;
 }
@@ -799,8 +813,8 @@ body::before {
 
 .close-btn {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: auto;
+  right: auto;
   border: none;
   background: white;
   color: black;
@@ -810,6 +824,10 @@ body::before {
   height: 32px;
   cursor: pointer;
   z-index: 80;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Close button for Video Modal: Fixed at bottom center of viewport */
