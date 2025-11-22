@@ -16,11 +16,13 @@ const chooseMapPage = document.getElementById('chooseMapPage');
 const schedulePage = document.getElementById('schedulePage');
 const plantaAltaMapPage = document.getElementById('plantaAltaMapPage');
 const plantaBajaMapPage = document.getElementById('plantaBajaMapPage');
+const subsueloMapPage = document.getElementById('subsueloMapPage');
 const roomPage = document.getElementById('roomPage');
 const goToMapBtn = document.getElementById('goToMapBtn');
 const goToScheduleBtn = document.getElementById('goToScheduleBtn');
 const plantaAltaBtn = document.getElementById('plantaAltaBtn');
 const plantaBajaBtn = document.getElementById('plantaBajaBtn');
+const subsueloBtn = document.getElementById('subsueloBtn');
 const scheduleContainer = document.getElementById('scheduleContainer');
 const MAP_VIEW_CONFIG = {
     plantaAltaMap: {
@@ -32,6 +34,11 @@ const MAP_VIEW_CONFIG = {
         wrapper: document.querySelector('.map-wrapper[data-map-view="planta-baja"]'),
         image: document.getElementById('mapPlantaBajaImage'),
         hotspots: document.getElementById('mapPlantaBajaHotspots')
+    },
+    subsueloMap: {
+        wrapper: document.querySelector('.map-wrapper[data-map-view="subsuelo"]'),
+        image: document.getElementById('mapSubsueloImage'),
+        hotspots: document.getElementById('mapSubsueloHotspots')
     }
 };
 const MAP_VIEW_KEYS = new Set(Object.keys(MAP_VIEW_CONFIG));
@@ -47,6 +54,7 @@ const VIEW_SECTIONS = {
     chooseMap: chooseMapPage,
     plantaAltaMap: plantaAltaMapPage,
     plantaBajaMap: plantaBajaMapPage,
+    subsueloMap: subsueloMapPage,
     schedule: schedulePage,
     room: roomPage
 };
@@ -75,7 +83,8 @@ clickSound.volume = SETTINGS.clickVol;
 const MAP_IMAGE_SOURCES = {
     default: 'img/map.png',
     plantaAltaMap: 'img/map.png',
-    plantaBajaMap: 'img/map.png'
+    plantaBajaMap: 'img/map.png',
+    subsueloMap: 'img/map.png',
 };
 
 MAP_VIEW_KEYS.forEach(viewKey => {
@@ -234,16 +243,64 @@ if (typeof CONFIG.autoScroll === 'undefined') {
 /* ---------- ROOM DEFINITIONS (placeholder layout) ---------- */
 const ROOM_DEFINITIONS = [
     {
-        id: 'room-colectivo',
-        roomTag: 'colectivo',
-        views: ['plantaAltaMap'],
-        title: 'Sala Colectivo',
-        shortLabel: '_colectivo',
+        id: 'room-cyber',
+        roomTag: 'cyber',
+        views: ['plantaBajaMap'],
+        title: 'Cyber',
+        shortLabel: '_cyber',
+        description: 'Animación, videojuegos y cruces con tecnología.',
+        area: { top: '45%', left: '15%', width: '15%', height: '23%' },
+        color: 'rgba(140, 0, 255, 0.7)',
+        restColor: 'rgba(140, 0, 255, 0.2)',
+        hoverColor: 'rgba(140, 0, 255, 0.46)',
+    },
+    {
+        id: 'room-planetario',
+        roomTag: 'planetario',
+        views: ['plantaBajaMap'],
+        title: 'Planetario',
+        shortLabel: '_planetario',
         description: 'Acciones performáticas y piezas centradas en el sonido.',
-        area: { top: '8%', left: '8%', width: '28%', height: '32%' },
+        area: { top: '40%', left: '30%', width: '30%', height: '40%' },
         color: 'rgba(255, 60, 0, 0.7)',
         restColor: 'rgba(255, 60, 0, 0.18)',
         hoverColor: 'rgba(255, 60, 0, 0.42)',
+    },
+    {
+        id: 'room-tapete',
+        roomTag: 'tapete',
+        views: ['plantaBajaMap'],
+        title: 'Tapete',
+        shortLabel: '_tapete',
+        description: 'Narrativas audiovisuales y piezas experimentales.',
+        area: { top: '50%', left: '60%', width: '30%', height: '30%' },
+        color: 'rgba(0, 200, 180, 0.74)',
+        restColor: 'rgba(0, 200, 180, 0.2)',
+        hoverColor: 'rgba(0, 200, 180, 0.46)',
+    },
+    {
+        id: 'room-caldera',
+        roomTag: 'caldera',
+        views: ['plantaBajaMap'],
+        title: 'Caldera',
+        shortLabel: '_caldera',
+        description: 'Acciones performáticas y piezas centradas en el sonido.',
+        area: { top: '25%', left: '45%', width: '15%', height: '15%' },
+        color: 'rgba(80, 200, 0, 0.7)',
+        restColor: 'rgba(80, 200, 0, 0.18)',
+        hoverColor: 'rgba(80, 200, 0, 0.42)',
+    },
+    {
+        id: 'room-tatrajo',
+        roomTag: 'tatrajo',
+        views: ['plantaBajaMap'],
+        title: 'Tatrajo',
+        shortLabel: '_tatrajo',
+        description: 'Acciones performáticas y piezas centradas en el sonido.',
+        area: { top: '5%', left: '30%', width: '30%', height: '20%' },
+        color: 'rgba(60, 0, 20, 0.7)',
+        restColor: 'rgba(60, 0, 20, 0.18)',
+        hoverColor: 'rgba(60, 0, 20, 0.42)',
     },
     {
         id: 'room-circo',
@@ -252,47 +309,59 @@ const ROOM_DEFINITIONS = [
         title: 'Circo',
         shortLabel: '_circo',
         description: 'Instalaciones y recorridos inmersivos.',
-        area: { top: '50%', left: '12%', width: '36%', height: '38%' },
+        area: { top: '20%', left: '40%', width: '25%', height: '50%' },
         color: 'rgba(0, 149, 255, 0.7)',
         restColor: 'rgba(0, 149, 255, 0.18)',
         hoverColor: 'rgba(0, 149, 255, 0.4)',
     },
     {
-        id: 'room-tapete',
-        roomTag: 'tapete',
-        views: ['plantaBajaMap'],
-        title: 'Sala Tapete',
-        shortLabel: '_tapete',
-        description: 'Narrativas audiovisuales y piezas experimentales.',
-        area: { top: '24%', left: '52%', width: '32%', height: '34%' },
-        color: 'rgba(0, 200, 180, 0.74)',
-        restColor: 'rgba(0, 200, 180, 0.2)',
-        hoverColor: 'rgba(0, 200, 180, 0.46)',
-    },
-    {
-        id: 'room-laboratorio',
-        roomTag: 'laboratorio',
-        views: ['plantaBajaMap'],
-        title: 'Laboratorio',
-        shortLabel: '_laboratorio',
-        description: 'Animación, videojuegos y cruces con tecnología.',
-        area: { top: '60%', left: '58%', width: '30%', height: '32%' },
-        color: 'rgba(140, 0, 255, 0.7)',
-        restColor: 'rgba(140, 0, 255, 0.2)',
-        hoverColor: 'rgba(140, 0, 255, 0.46)',
-    },
-    {
-        id: 'room-general',
-        roomTag: 'general',
+        id: 'room-colectivo',
+        roomTag: 'colectivo',
         views: ['plantaAltaMap'],
-        title: 'Sala General',
-        shortLabel: '_general',
+        title: 'Colectivo',
+        shortLabel: '_colectivo',
         description: 'Todos los proyectos disponibles.',
-        area: { top: '10%', left: '72%', width: '20%', height: '18%' },
+        area: { top: '35%', left: '65%', width: '30%', height: '35%' },
         color: 'rgba(30, 30, 30, 0.75)',
         restColor: 'rgba(30, 30, 30, 0.16)',
         hoverColor: 'rgba(30, 30, 30, 0.42)',
-    }
+    },
+    {
+        id: 'room-taller',
+        roomTag: 'taller',
+        views: ['plantaAltaMap'],
+        title: 'Taller',
+        shortLabel: '_taller',
+        description: 'Todos los proyectos disponibles.',
+        area: { top: '30%', left: '5%', width: '20%', height: '25%' },
+        color: 'rgba(30, 30, 30, 0.75)',
+        restColor: 'rgba(30, 30, 30, 0.16)',
+        hoverColor: 'rgba(30, 30, 30, 0.42)',
+    },
+        {
+        id: 'room-tecnico',
+        roomTag: 'tecnico',
+        views: ['plantaAltaMap'],
+        title: 'Tecnico',
+        shortLabel: '_tecnico',
+        description: 'Todos los proyectos disponibles.',
+        area: { top: '30%', left: '25%', width: '15%', height: '20%' },
+        color: 'rgba(177, 92, 12, 0.75)',
+        restColor: 'rgba(177, 92, 12, 0.16)',
+        hoverColor: 'rgba(177, 92, 12, 0.42)',
+    },
+    {
+        id: 'room-subsuelo',
+        roomTag: 'subsuelo',
+        views: ['subsueloMap'],
+        title: 'Subsuelo',
+        shortLabel: '_subsuelo',
+        description: 'Todos los proyectos disponibles.',
+        area: { top: '30%', left: '25%', width: '50%', height: '40%' },
+        color: 'rgba(30, 30, 30, 0.75)',
+        restColor: 'rgba(30, 30, 30, 0.16)',
+        hoverColor: 'rgba(30, 30, 30, 0.42)',
+    },
 ];
 
 const ROOM_LOOKUP = ROOM_DEFINITIONS.reduce((acc, room) => {
@@ -583,6 +652,7 @@ function buildGallery(roomId = null) {
     // write a value so getClipVolume() will fall back to SETTINGS.videoVol.
     if (p.volume != null) card.dataset.volume = p.volume;
         card.dataset.title = p.title;
+        card.dataset.artist = p.artist || '';
         card.dataset.desc = p.desc;
         card.dataset.tags = JSON.stringify(p.tags);
 
@@ -919,6 +989,11 @@ if (plantaBajaBtn) plantaBajaBtn.addEventListener('click', () => {
     setView('plantaBajaMap');
 });
 
+if (subsueloBtn) subsueloBtn.addEventListener('click', () => {
+    playSound(clickSound);
+    setView('subsueloMap');
+});
+
 // Ensure initial button and view states reflect the default view
 updateNavButtons();
 updateViewSections();
@@ -1001,18 +1076,22 @@ if (infoModal) infoModal.addEventListener('click', (e) => { if (e.target === inf
 function openVideo(card) {
     // Update meta
     const titleEl = document.getElementById('videoTitle');
+    const artistEl = document.getElementById('videoArtist');
     const descEl = document.getElementById('videoDesc');
     const tagContainer = document.getElementById('videoTags');
 
     titleEl.textContent = card.dataset.title;
+    artistEl.textContent = card.dataset.artist || '';
     descEl.textContent = card.dataset.desc;
     tagContainer.innerHTML = '';
     const tags = JSON.parse(card.dataset.tags || '[]');
+    const currentRoomId = card.dataset.roomId; // Get room ID from card
+
     tags.forEach(tag => {
         const t = document.createElement('span');
         t.className = 'tag';
         t.textContent = tag;
-        t.onclick = (e) => { e.stopPropagation(); openTag(tag); };
+        t.onclick = (e) => { e.stopPropagation(); openTag(tag, currentRoomId); };
         tagContainer.appendChild(t);
     });
 
@@ -1112,9 +1191,15 @@ function closeModal(opts = {}) {
 closeVideo.addEventListener('click', () => { playSound(clickSound); closeModal(); });
 
 /* ---------- TAG NAVIGATION ---------- */
-function openTag(tag) {
+function openTag(tag, roomId) {
     const cards = Array.from(document.querySelectorAll('.card'));
-    const matches = cards.filter(c => JSON.parse(c.dataset.tags || "[]").includes(tag));
+    // Filter by tag AND room
+    const matches = cards.filter(c => {
+        const hasTag = JSON.parse(c.dataset.tags || "[]").includes(tag);
+        const inRoom = roomId ? c.dataset.roomId === roomId : true;
+        return hasTag && inRoom;
+    });
+    
     if (!matches.length) return;
 
     // Use the player's current source to exclude the currently playing card.

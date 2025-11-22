@@ -38,13 +38,14 @@
             <div class="choose-map-options">
                 <button id="plantaAltaBtn" class="menu-btn map-choice-btn">Planta Alta</button>
                 <button id="plantaBajaBtn" class="menu-btn map-choice-btn">Planta Baja</button>
+                <button id="subsueloBtn" class="menu-btn map-choice-btn">Subsuelo</button>
             </div>
         </section>
 
         <section id="schedulePage" class="view schedule-page">
             <div class="schedule-page-header">
-                <h2>Cronograma</h2>
-                <p>Este es el cronograma de eventos.</p>
+                <h2>Programación</h2>
+                <p>Eventos con horario puntual.</p>
             </div>
             <div id="scheduleContainer"></div>
         </section>
@@ -71,10 +72,21 @@
             </div>
         </section>
 
+        <section id="subsueloMapPage" class="view map-page" data-map-view="subsuelo">
+            <div class="map-page-header">
+                <h2>Mapa · Subsuelo</h2>
+                <p>Explorá los proyectos del subsuelo.</p>
+            </div>
+            <div class="map-wrapper" data-map-view="subsuelo">
+                <img id="mapSubsueloImage" class="map-base" alt="Mapa subsuelo" loading="lazy" />
+                <div id="mapSubsueloHotspots" class="map-hotspots" aria-label="Salas del evento"></div>
+            </div>
+        </section>
+
         <section id="roomPage" class="view room-page">
             <div class="room-page-header">
-                <h2 id="roomTitle"></h2>
-                <p id="roomDescription" class="is-hidden"></p>
+                <h2 id="roomTitle">Salas</h2>
+                <p id="roomDescription" class="is-hidden">Aquí se pueden visitar las salas.</p>
             </div>
             <div id="roomEmptyMessage" class="empty-room-message" hidden>No hay proyectos asignados a esta sala todavía.</div>
             <div class="grid" id="gallery"></div>
@@ -90,6 +102,7 @@
             <!-- Project info section -->
             <div class="video-info">
                 <h2 id="videoTitle"></h2>
+                <h3 id="videoArtist"></h3>
                 <p id="videoDesc"></p>
                 <div id="videoTags" class="tag-container"></div>
             </div>
@@ -101,7 +114,7 @@
         <div class="info-frame">
             <button class="close-btn" id="closeInfo">X</button>
             <h2>Magma 2025</h2>
-            <p>Muestra anual de Proyecto Audiovisual de la cátedra Campos-Trilnick (Diseño de Imagen y Sonido, FADU–UBA), gestionada por lxs estudiantes en colaboración con lxs docentes.</p>
+            <p>Muestra anual de Proyecto Audiovisual I, II, III y IV de la cátedra Campos-Trilnick, gestionada por lxs estudiantes en colaboración con lxs docentes. Diseño de Imagen y Sonido, FADU–UBA</p>
             <!--<p>
                 Diseño web y programación:
                 <a href="https://juanigonzalez.cargo.site" target="_blank" rel="noopener noreferrer" id="juan-gonzalez">juanigonzalez</a>
