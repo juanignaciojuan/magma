@@ -328,16 +328,6 @@ const projects = [
     tags: ["instalación", "ficción", "electrónica"]
   },
   {
-    img: "img/planetario_13.png",
-    video: "video/video13.mp4",
-    /*volume: 0.5,*/
-    title: "Intersticio: expositor en el silencio",
-    artist: "Clementina Chedrese, Maximiliano Gottlieb, Anre Guerrero, Yerko Nicolás Moreira y Pedro Palacios",
-    desc: "Cortinarius es un ser extraño sale de su estrecho, cómodo y onírico mundo a buscar un espacio en el mundo humano. Ahí descubrirá que existe un lugar para elle",
-    roomTag: "planetario",
-    tags: ["monocanal", "documental", "performance"]
-  },
-  {
     img: "img/planetario_14.png",
     video: "video/video14.mp4",
     /*volume: 0.5,*/

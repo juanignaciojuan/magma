@@ -386,10 +386,10 @@ body:not(.view-subsueloMap) #subsueloMapPage {
 .map-room {
   position: absolute;
   pointer-events: auto;
-  border: 2px solid var(--room-color, rgba(0, 230, 255, 0.7));
-  background: var(--room-rest, rgba(0, 230, 255, 0.18));
+  /*border: 2px solid var(--room-color, rgba(0, 230, 255, 0.7));
+  background: var(--room-rest, rgba(0, 230, 255, 0.18));*/
   color: #000;
-  border-radius: 12px;
+  /*border-radius: 12px;*/
   padding: 10px 12px;
   cursor: pointer;
   display: flex;
@@ -407,14 +407,15 @@ body:not(.view-subsueloMap) #subsueloMapPage {
 
 .map-room:hover,
 .map-room:focus-visible {
-  transform: translateY(-2px);
+  /* no transform/zoom on hover - keep visual feedback subtle */
+  transform: none;
   background: var(--room-hover, rgba(0, 230, 255, 0.42));
-  box-shadow: 0 0 18px rgba(0, 0, 0, 0.25);
+  box-shadow: none;
   outline: none;
 }
 
 .map-room:focus-visible {
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.12);
 }
 
 .map-room[data-empty="true"] {
@@ -958,3 +959,99 @@ body.view-start main > .view {
 .video-modal .video-frame {
   z-index: 210;
 }
+
+/* Hotspot image + label styling: makes room PNGs fill the colored area
+   and displays a small label overlay for readability. */
+.map-room {
+  overflow: hidden; /* ensure image doesn't escape button area */
+}
+
+.map-room .room-map-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  z-index: 0;
+  transition: transform 260ms ease, opacity 220ms ease;
+  pointer-events: none;
+}
+
+.map-room .map-room-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000; /* default: black */
+  z-index: 3;
+  pointer-events: none;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.map-room:hover .room-map-img {
+  /* keep image static on hover to avoid seams shifting */
+  transform: none;
+}
+
+/* When no image is provided the existing span remains visible and above the
+   background; ensure it stays above images when present. */
+.map-room > span {
+  box-sizing: border-box;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  pointer-events: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.map-room .room-map-img { box-sizing: border-box; }
+
+
+/* Image-backed hotspots: remove colored backgrounds, borders, shadows and
+   rounded corners so PNGs can fully define the visual. Padding is removed
+   to make the image area match the button's geometry exactly. */
+.map-room.has-img {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+}
+
+.map-room.has-img:hover,
+.map-room.has-img:focus-visible {
+  /* Keep visual feedback subtle for image-backed hotspots. No overlay.
+     Keep transform/box-shadow disabled for seam stability. */
+  background: transparent !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* change label/text color on hover as requested */
+.map-room:hover > span,
+.map-room:hover .map-room-label,
+.map-room.has-img:hover > span,
+.map-room.has-img:hover .map-room-label {
+  color: rgba(255,60,0,1); /* orange on hover */
+}
+
+.map-room.has-img .map-room-label {
+  left: 6px;
+  right: 6px;
+  bottom: 6px;
+}
+
+/* Dev tuning helper: when `body` has `.dev-tune`, disable automatic
+   object-fit and any wrapper sizing so you can tune `area` values and
+   `imgArea` precisely without aspect-ratio constraints. Toggle from
+   the console with `toggleDevTune()` (defined in script.js). */
+/* (dev tuning styles removed) */

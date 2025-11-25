@@ -243,124 +243,176 @@ if (typeof CONFIG.autoScroll === 'undefined') {
 /* ---------- ROOM DEFINITIONS (placeholder layout) ---------- */
 const ROOM_DEFINITIONS = [
     {
-        id: 'room-cyber',
+        id: 'room-patio',
+        roomTag: 'patio',
+        views: ['plantaBajaMap'],
+        title: 'Patio',
+        shortLabel: 'patio',
+        description: 'Patio principal.',
+        area: { top: '71.4%', left: '41.5%', width: '47%', height: '24.2%' },
+        img: 'img/patio.png',
+        /* special behavior: when clicked go to schedule */
+        linkTo: 'schedule'
+    },
+    {
+        id: 'room-nomade',
+        roomTag: 'nomade',
+        // moved to Planta Baja as requested
+        views: ['plantaBajaMap'],
+        title: 'Nómade',
+        shortLabel: 'nómade',
+        description: 'Espacio Nómade.',
+        area: { top: '73%', left: '25%', width: '22%', height: '20.5%' },
+        img: 'img/nomade.png',
+        /* special behavior: when clicked go to schedule */
+        linkTo: 'schedule'
+    },
+    {
+        id: 'room-patio-sur',
+        roomTag: 'patio-sur',
+        views: ['plantaBajaMap'],
+        title: 'Patio Sur',
+        shortLabel: 'patio sur',
+        description: 'Patio Sur.',
+        area: { top: '63.6%', left: '6.2%', width: '24%', height: '30%' },
+        img: 'img/patio-sur.png',
+        // nudge label up into the white area beside the patio
+        labelOffset: { transform: 'translateY(-60px)' },
+        /* special behavior: when clicked go to schedule */
+        linkTo: 'schedule'
+    },
+    // `room-banos` removed per request; baños page deleted
+    {
+        id: 'room-app',
         roomTag: 'cyber',
         views: ['plantaBajaMap'],
         title: 'Cyber',
-        shortLabel: '_cyber',
+        shortLabel: 'cyber',
         description: 'Animación, videojuegos y cruces con tecnología.',
-        area: { top: '45%', left: '15%', width: '15%', height: '23%' },
-        color: 'rgba(140, 0, 255, 0.7)',
+        area: { top: '45.8%', left: '29.8%', width: '12%', height: '18%' },
+        img: 'img/cyber.png',
+        /*color: 'rgba(140, 0, 255, 0.7)',
         restColor: 'rgba(140, 0, 255, 0.2)',
-        hoverColor: 'rgba(140, 0, 255, 0.46)',
+        hoverColor: 'rgba(140, 0, 255, 0.46)',*/
     },
     {
         id: 'room-planetario',
         roomTag: 'planetario',
         views: ['plantaBajaMap'],
         title: 'Planetario',
-        shortLabel: '_planetario',
+        shortLabel: 'planetario',
         description: 'Acciones performáticas y piezas centradas en el sonido.',
-        area: { top: '40%', left: '30%', width: '30%', height: '40%' },
-        color: 'rgba(255, 60, 0, 0.7)',
+        area: { top: '36.8%', left: '40.8%', width: '24%', height: '37%' },
+        img: 'img/planetario.png',
+        /*color: 'rgba(255, 60, 0, 0.7)',
         restColor: 'rgba(255, 60, 0, 0.18)',
-        hoverColor: 'rgba(255, 60, 0, 0.42)',
+        hoverColor: 'rgba(255, 60, 0, 0.42)',*/
     },
     {
         id: 'room-tapete',
         roomTag: 'tapete',
         views: ['plantaBajaMap'],
         title: 'Tapete',
-        shortLabel: '_tapete',
+        shortLabel: 'tapete',
         description: 'Narrativas audiovisuales y piezas experimentales.',
-        area: { top: '50%', left: '60%', width: '30%', height: '30%' },
-        color: 'rgba(0, 200, 180, 0.74)',
+        area: { top: '45.5%', left: '63.5%', width: '25%', height: '28%' },
+        img: 'img/tapete.png',
+        /*color: 'rgba(0, 200, 180, 0.74)',
         restColor: 'rgba(0, 200, 180, 0.2)',
-        hoverColor: 'rgba(0, 200, 180, 0.46)',
+        hoverColor: 'rgba(0, 200, 180, 0.46)',*/
     },
     {
         id: 'room-caldera',
         roomTag: 'caldera',
         views: ['plantaBajaMap'],
         title: 'Caldera',
-        shortLabel: '_caldera',
+        shortLabel: 'caldera',
         description: 'Acciones performáticas y piezas centradas en el sonido.',
-        area: { top: '25%', left: '45%', width: '15%', height: '15%' },
-        color: 'rgba(80, 200, 0, 0.7)',
+        area: { top: '26%', left: '48%', width: '18%', height: '12%' },
+        img: 'img/caldera.png',
+        /*color: 'rgba(80, 200, 0, 0.7)',
         restColor: 'rgba(80, 200, 0, 0.18)',
-        hoverColor: 'rgba(80, 200, 0, 0.42)',
+        hoverColor: 'rgba(80, 200, 0, 0.42)',*/
     },
     {
         id: 'room-tatrajo',
         roomTag: 'tatrajo',
         views: ['plantaBajaMap'],
         title: 'Tatrajo',
-        shortLabel: '_tatrajo',
+        shortLabel: 'tatrajo',
         description: 'Acciones performáticas y piezas centradas en el sonido.',
-        area: { top: '5%', left: '30%', width: '30%', height: '20%' },
-        color: 'rgba(60, 0, 20, 0.7)',
+        area: { top: '7%', left: '37.8%', width: '29%', height: '19%' },
+        img: 'img/tatrajo.png',
+        /*color: 'rgba(60, 0, 20, 0.7)',
         restColor: 'rgba(60, 0, 20, 0.18)',
-        hoverColor: 'rgba(60, 0, 20, 0.42)',
+        hoverColor: 'rgba(60, 0, 20, 0.42)',*/
     },
     {
         id: 'room-circo',
         roomTag: 'circo',
         views: ['plantaAltaMap'],
         title: 'Circo',
-        shortLabel: '_circo',
+        shortLabel: 'circo',
         description: 'Instalaciones y recorridos inmersivos.',
-        area: { top: '20%', left: '40%', width: '25%', height: '50%' },
-        color: 'rgba(0, 149, 255, 0.7)',
+        area: { top: '30%', left: '40%', width: '25%', height: '50%' },
+        img: 'img/circo.png',
+        /*color: 'rgba(0, 149, 255, 0.7)',
         restColor: 'rgba(0, 149, 255, 0.18)',
-        hoverColor: 'rgba(0, 149, 255, 0.4)',
+        hoverColor: 'rgba(0, 149, 255, 0.4)',*/
     },
     {
         id: 'room-colectivo',
         roomTag: 'colectivo',
         views: ['plantaAltaMap'],
         title: 'Colectivo',
-        shortLabel: '_colectivo',
+        shortLabel: 'colectivo',
         description: 'Todos los proyectos disponibles.',
-        area: { top: '35%', left: '65%', width: '30%', height: '35%' },
-        color: 'rgba(30, 30, 30, 0.75)',
+        area: { top: '46%', left: '64%', width: '27%', height: '29%' },
+        img: 'img/colectivo.png',
+        /*color: 'rgba(30, 30, 30, 0.75)',
         restColor: 'rgba(30, 30, 30, 0.16)',
-        hoverColor: 'rgba(30, 30, 30, 0.42)',
+        hoverColor: 'rgba(30, 30, 30, 0.42)',*/
     },
     {
         id: 'room-taller',
         roomTag: 'taller',
         views: ['plantaAltaMap'],
         title: 'Taller',
-        shortLabel: '_taller',
+        shortLabel: 'taller',
         description: 'Todos los proyectos disponibles.',
-        area: { top: '30%', left: '5%', width: '20%', height: '25%' },
-        color: 'rgba(30, 30, 30, 0.75)',
+        area: { top: '37.8%', left: '3%', width: '25%', height: '35%' },
+        img: 'img/taller.png',
+        /*color: 'rgba(30, 30, 30, 0.75)',
         restColor: 'rgba(30, 30, 30, 0.16)',
-        hoverColor: 'rgba(30, 30, 30, 0.42)',
+        hoverColor: 'rgba(30, 30, 30, 0.42)',*/
     },
         {
         id: 'room-tecnico',
         roomTag: 'tecnico',
         views: ['plantaAltaMap'],
         title: 'Tecnico',
-        shortLabel: '_tecnico',
+        shortLabel: 'técnico',
         description: 'Todos los proyectos disponibles.',
-        area: { top: '30%', left: '25%', width: '15%', height: '20%' },
-        color: 'rgba(177, 92, 12, 0.75)',
+        area: { top: '46.2%', left: '24.2%', width: '20%', height: '27%' },
+        img: 'img/tecnico.png',
+        // nudge label up into the white gap and slightly left
+        labelOffset: { transform: 'translateY(-32px)', translateX: '-3px' },
+        /*color: 'rgba(177, 92, 12, 0.75)',
         restColor: 'rgba(177, 92, 12, 0.16)',
-        hoverColor: 'rgba(177, 92, 12, 0.42)',
+        hoverColor: 'rgba(177, 92, 12, 0.42)',*/
     },
     {
         id: 'room-subsuelo',
         roomTag: 'subsuelo',
         views: ['subsueloMap'],
         title: 'Subsuelo',
-        shortLabel: '_subsuelo',
+        shortLabel: 'subsuelo',
         description: 'Todos los proyectos disponibles.',
         area: { top: '30%', left: '25%', width: '50%', height: '40%' },
-        color: 'rgba(30, 30, 30, 0.75)',
+        img: 'img/subsuelo.png',
+        /*color: 'rgba(30, 30, 30, 0.75)',
         restColor: 'rgba(30, 30, 30, 0.16)',
-        hoverColor: 'rgba(30, 30, 30, 0.42)',
+        hoverColor: 'rgba(30, 30, 30, 0.42)',*/
     },
 ];
 
@@ -900,12 +952,126 @@ function buildMapHotspotsForView(viewKey) {
         if (area.width) btn.style.width = area.width;
         if (area.height) btn.style.height = area.height;
         if (room.cornerRadius) btn.style.borderRadius = room.cornerRadius;
-        const span = document.createElement('span');
-        span.textContent = room.shortLabel || room.title || room.id;
-        btn.appendChild(span);
+        // Compute a label text used both for the visible label and for
+        // the fallback title text (prevents referencing an undefined span).
+        const labelText = room.shortLabel || room.title || room.id;
+
+        // If an image is provided for the room, use it as the hotspot visual.
+        if (room.img) {
+            const rimg = document.createElement('img');
+            rimg.className = 'room-map-img';
+            rimg.src = room.img;
+            rimg.loading = 'lazy';
+            rimg.decoding = 'async';
+            rimg.alt = room.title || room.id || '';
+            rimg.draggable = false;
+
+            // Allow per-room image positioning/size via `imgArea` in the
+            // ROOM_DEFINITIONS (top/left/width/height). If not present,
+            // image fills the hotspot button.
+            const imgArea = room.imgArea || {};
+            if (imgArea.top || imgArea.left || imgArea.width || imgArea.height) {
+                rimg.style.position = 'absolute';
+                if (imgArea.top) rimg.style.top = imgArea.top;
+                if (imgArea.left) rimg.style.left = imgArea.left;
+                if (imgArea.width) rimg.style.width = imgArea.width;
+                if (imgArea.height) rimg.style.height = imgArea.height;
+            } else {
+                rimg.style.position = 'absolute';
+                rimg.style.top = '0';
+                rimg.style.left = '0';
+                rimg.style.width = '100%';
+                rimg.style.height = '100%';
+            }
+
+            // object-fit can be customized per-room via `imgFit` (cover|contain)
+            // Default to 'contain' so PNG pieces are fully visible and not
+            // cropped; use `imgFit: 'cover'` per-room when you need bleed.
+            rimg.style.objectFit = room.imgFit || 'contain';
+            rimg.style.pointerEvents = 'none';
+
+            btn.appendChild(rimg);
+            // Ensure the hotspot button never becomes larger than the
+            // image's natural size. When the image loads, compare natural
+            // pixels against the rendered button and shrink/recenter the
+            // button if needed so it does not overlap the PNG.
+            rimg.addEventListener('load', () => {
+                try {
+                    const natW = rimg.naturalWidth || 0;
+                    const natH = rimg.naturalHeight || 0;
+                    if (!natW || !natH) return;
+                    const containerRect = container.getBoundingClientRect();
+                    const btnRect = btn.getBoundingClientRect();
+
+                    const natPctW = (natW / Math.max(1, containerRect.width)) * 100;
+                    const natPctH = (natH / Math.max(1, containerRect.height)) * 100;
+
+                    // Current button percentages (fallback to computed)
+                    let currentWidthPct = null;
+                    let currentHeightPct = null;
+                    if (area.width && typeof area.width === 'string' && area.width.trim().endsWith('%')) {
+                        currentWidthPct = parseFloat(area.width);
+                    } else {
+                        currentWidthPct = (btnRect.width / Math.max(1, containerRect.width)) * 100;
+                    }
+                    if (area.height && typeof area.height === 'string' && area.height.trim().endsWith('%')) {
+                        currentHeightPct = parseFloat(area.height);
+                    } else {
+                        currentHeightPct = (btnRect.height / Math.max(1, containerRect.height)) * 100;
+                    }
+
+                    // If button is bigger than natural image, shrink it and keep center
+                    const needsShrinkW = currentWidthPct > natPctW + 0.1;
+                    const needsShrinkH = currentHeightPct > natPctH + 0.1;
+                    if (needsShrinkW || needsShrinkH) {
+                        const newWidthPct = needsShrinkW ? Math.min(currentWidthPct, natPctW) : currentWidthPct;
+                        const newHeightPct = needsShrinkH ? Math.min(currentHeightPct, natPctH) : currentHeightPct;
+
+                        const centerX = btnRect.left + btnRect.width / 2;
+                        const centerY = btnRect.top + btnRect.height / 2;
+                        const newLeftPct = ((centerX - containerRect.left) / containerRect.width) * 100 - newWidthPct / 2;
+                        const newTopPct = ((centerY - containerRect.top) / containerRect.height) * 100 - newHeightPct / 2;
+
+                        btn.style.width = `${Math.max(0.5, newWidthPct)}%`;
+                        btn.style.height = `${Math.max(0.5, newHeightPct)}%`;
+                        btn.style.left = `${Math.max(0, Math.min(100 - newWidthPct, newLeftPct))}%`;
+                        btn.style.top = `${Math.max(0, Math.min(100 - newHeightPct, newTopPct))}%`;
+                    }
+                } catch (e) { /* ignore */ }
+            });
+            // Add a label overlay for accessibility/legend
+            const lbl = document.createElement('span');
+            lbl.className = 'map-room-label';
+            lbl.textContent = labelText;
+            // Apply optional per-room label offsets (allows small nudge without changing button geometry)
+            const labelOffset = room.labelOffset || null;
+            if (labelOffset) {
+                try {
+                    if (labelOffset.top) lbl.style.top = labelOffset.top;
+                    if (labelOffset.left) lbl.style.left = labelOffset.left;
+                    // Support composing transforms: existing transform + independent translateX
+                    const transforms = [];
+                    if (labelOffset.transform) transforms.push(labelOffset.transform);
+                    if (typeof labelOffset.translateX !== 'undefined' && labelOffset.translateX !== null) {
+                        transforms.push(`translateX(${labelOffset.translateX})`);
+                    }
+                    if (transforms.length) lbl.style.transform = transforms.join(' ');
+                    if (labelOffset.color) lbl.style.color = labelOffset.color;
+                } catch (e) { /* ignore */ }
+            }
+            btn.appendChild(lbl);
+            // mark button as image-backed so CSS can remove colored UI
+            btn.classList.add('has-img');
+        } else {
+            const span = document.createElement('span');
+            span.textContent = labelText;
+            btn.appendChild(span);
+        }
         const count = getRoomProjects(room).length;
-        if (!count) btn.dataset.empty = 'true';
-        const titleText = room.title || span.textContent || room.id;
+        // Keep patio and patio-sur visually the same as other rooms even when empty
+        const neverMarkEmpty = ['room-patio', 'room-patio-sur', 'room-nomade'].includes(room.id);
+        if (!count && !neverMarkEmpty) btn.dataset.empty = 'true';
+        const titleText = room.title || labelText || room.id;
         const descriptive = count
             ? `${titleText} – ${count} proyecto${count === 1 ? '' : 's'}`
             : `${titleText} – sin proyectos asignados todavía`;
@@ -917,6 +1083,16 @@ function buildMapHotspotsForView(viewKey) {
         }, { passive: true });
         btn.addEventListener('click', () => {
             playSound(clickSound);
+            // If the room defines a special destination, follow it.
+            if (room.linkTo === 'schedule') {
+                setView('schedule');
+                return;
+            }
+            if (room.linkTo === 'chooseMap') {
+                setView('chooseMap');
+                return;
+            }
+            // Default behavior: enter the room (show gallery)
             enterRoom(room.id);
         });
 
@@ -1304,3 +1480,6 @@ function getClipVolume(card) {
     const base = hasClip ? clip : SETTINGS.videoVol;
     return clamp01(base);
 }
+
+/* ---------- IN-PAGE DEV TUNER (UI) ---------- */
+/* (dev tuner removed) */
