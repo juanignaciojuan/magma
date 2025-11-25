@@ -277,7 +277,7 @@ const ROOM_DEFINITIONS = [
         area: { top: '63.6%', left: '6.2%', width: '24%', height: '30%' },
         img: 'img/patio-sur.png',
         // nudge label up into the white area beside the patio
-        labelOffset: { transform: 'translateY(-60px)' },
+        labelOffset: { transform: 'translateY(-30px)' },
         /* special behavior: when clicked go to schedule */
         linkTo: 'schedule'
     },
@@ -343,6 +343,7 @@ const ROOM_DEFINITIONS = [
         description: 'Acciones performáticas y piezas centradas en el sonido.',
         area: { top: '7%', left: '37.8%', width: '29%', height: '19%' },
         img: 'img/tatrajo.png',
+        labelOffset: { transform: 'translateY(20px)'},
         /*color: 'rgba(60, 0, 20, 0.7)',
         restColor: 'rgba(60, 0, 20, 0.18)',
         hoverColor: 'rgba(60, 0, 20, 0.42)',*/
