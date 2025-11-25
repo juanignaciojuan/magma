@@ -733,6 +733,21 @@ function buildGallery(roomId = null) {
         revealAppSoon();
     gallery.appendChild(frag);
 
+    // If the current room has very few projects, make the gallery layout
+    // use fewer, larger cards so items don't look lonely on the page.
+    try {
+        const projCount = shuffledProjects.length;
+        // If there are fewer than 5 projects, present them as if the layout
+        // had 5 columns so single/two/three/four items don't appear oversized.
+        if (projCount > 0 && projCount < 5) {
+            gallery.classList.add('few-projects');
+            gallery.style.setProperty('--few-cols', '5');
+        } else {
+            gallery.classList.remove('few-projects');
+            gallery.style.removeProperty('--few-cols');
+        }
+    } catch (e) { /* ignore layout tuning failure */ }
+
     // Add interactions after cards are created
     gallery.querySelectorAll('.card').forEach(card => {
         // Play hover sound on real mouse hover; avoid on touch to prevent double sounds
@@ -824,7 +839,10 @@ function fitMapToViewport(view = currentView) {
     if (availableHeight <= 0) return;
 
     const ratio = image.naturalWidth / Math.max(1, image.naturalHeight);
-    const maxCssWidth = Math.min(window.innerWidth * 0.92, 960);
+    // Allow larger maps on very wide screens (TVs). Use a higher cap when
+    // the viewport is very wide so the map can take more horizontal space.
+    const wideCap = window.innerWidth >= 1600 ? 1400 : 960;
+    const maxCssWidth = Math.min(window.innerWidth * 0.96, wideCap);
     const defaultHeight = maxCssWidth / ratio;
 
     if (defaultHeight <= availableHeight) return;

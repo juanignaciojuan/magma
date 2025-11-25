@@ -102,10 +102,11 @@
   /* phones: min resolution */
   --cols-tablet: 4;
   /* tablets */
-  --cols-desktop: 8;
+  --cols-desktop: 5;
   /* large screens: max */
   --grid-gap: 16px;
   /* space between cards */
+  --map-max-width: 960px;
 }
 
 html,
@@ -333,7 +334,7 @@ body:not(.view-subsueloMap) #subsueloMapPage {
 
 .map-wrapper {
   position: relative;
-  width: min(960px, 92vw);
+  width: min(var(--map-max-width, 960px), 92vw);
   margin: 0 auto;
   border-radius: 14px;
   box-shadow: 0 0 32px rgba(0, 0, 0, 0.18);
@@ -920,6 +921,16 @@ body.view-start main > .view {
   }
 
   /* Replace header Mapa y Programación text with an icon on mobile */
+
+  /* Slightly reduce map label and room text on small phones */
+  .map-room {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+  .map-room .map-room-label,
+  .map-room > span {
+    font-size: 12px;
+  }
 }
 
 /* Tablets: 4 columns */
@@ -948,6 +959,50 @@ body.view-start main > .view {
     --grid-gap: 16px;
   }
 
+}
+
+/* Widescreen / TV: allow map wrappers to become larger and use more of the viewport */
+@media (min-width: 1600px) {
+  :root { --map-max-width: 1400px; }
+  .map-wrapper {
+    width: min(var(--map-max-width), 96vw);
+  }
+}
+
+/* When gallery has few projects, present fewer columns and larger cards */
+.grid.few-projects {
+  /* Switch to a centered flex layout when there are few projects so
+     items are not stretched across the whole page. The JS sets
+     --few-cols to 3 for 1–3 projects; width calculation below uses
+     that value as a target column count. */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: calc(var(--grid-gap) * 1.25);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.grid.few-projects .card {
+  /* Each card should take approximately 1/--few-cols of the available
+     width but allow a sensible min so cards don't become too small. */
+  flex: 0 0 calc((100% / var(--few-cols, 3)) - (var(--grid-gap) * 0.66));
+  max-width: calc((100% / var(--few-cols, 3)) - (var(--grid-gap) * 0.66));
+}
+
+@media (min-width: 768px) {
+  .grid.few-projects .card {
+    flex: 0 0 calc((100% / var(--few-cols, 3)) - (var(--grid-gap) * 0.5));
+    max-width: calc((100% / var(--few-cols, 3)) - (var(--grid-gap) * 0.5));
+  }
+}
+
+@media (min-width: 1242px) {
+  .grid.few-projects .card {
+    flex: 0 0 calc((100% / var(--few-cols, 3)) - (var(--grid-gap) * 0.4));
+    max-width: calc((100% / var(--few-cols, 3)) - (var(--grid-gap) * 0.4));
+  }
 }
 
 /* interactive area around cards for closing modal */
