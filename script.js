@@ -87,6 +87,9 @@ const MAP_IMAGE_SOURCES = {
     subsueloMap: 'img/map.png',
 };
 
+// Runtime feature flags
+const HOTSPOT_SHRINK_ENABLED = false; // set to true to re-enable JS shrink logic
+
 MAP_VIEW_KEYS.forEach(viewKey => {
     const config = MAP_VIEW_CONFIG[viewKey];
     if (!config) return;
@@ -732,19 +735,41 @@ function buildGallery(roomId = null) {
         // Reveal the app UI shortly after gallery is in the DOM (avoids header flash)
         revealAppSoon();
     gallery.appendChild(frag);
-
-    // If the current room has very few projects, make the gallery layout
-    // use fewer, larger cards so items don't look lonely on the page.
+    // After inserting cards, apply a layout helper so rooms with fewer
+    // items keep the same card dimensions as full grids and appear centered.
     try {
         const projCount = shuffledProjects.length;
-        // If there are fewer than 5 projects, present them as if the layout
-        // had 5 columns so single/two/three/four items don't appear oversized.
-        if (projCount > 0 && projCount < 5) {
+        if (projCount >= 2 && projCount < 5) {
             gallery.classList.add('few-projects');
             gallery.style.setProperty('--few-cols', '5');
         } else {
             gallery.classList.remove('few-projects');
             gallery.style.removeProperty('--few-cols');
+        }
+
+        // Compute columns based on current viewport to match CSS breakpoints
+        const computeCols = () => {
+            const w = window.innerWidth;
+            if (w < 461) return 2; // small phones
+            if (w < 1242) return 4; // tablets / laptops
+            return 5; // desktop / wide
+        };
+
+        const cols = computeCols();
+        const cards = Array.from(gallery.querySelectorAll('.card'));
+
+        // If fewer cards than columns, center them inside the grid by
+        // shifting their `grid-column-start`. This keeps card sizes
+        // identical to the full-grid case but visually centered.
+        if (cards.length > 0 && cards.length < cols) {
+            const start = Math.floor((cols - cards.length) / 2) + 1;
+            for (let i = 0; i < cards.length; i++) {
+                const c = cards[i];
+                c.style.gridColumnStart = (start + i).toString();
+            }
+        } else {
+            // Clear any previous overrides
+            cards.forEach(c => { c.style.removeProperty('grid-column-start'); });
         }
     } catch (e) { /* ignore layout tuning failure */ }
 
@@ -1016,6 +1041,8 @@ function buildMapHotspotsForView(viewKey) {
             // button if needed so it does not overlap the PNG.
             rimg.addEventListener('load', () => {
                 try {
+                    // Optionally disable the JS shrink logic entirely via flag.
+                    if (!HOTSPOT_SHRINK_ENABLED) return;
                     const natW = rimg.naturalWidth || 0;
                     const natH = rimg.naturalHeight || 0;
                     if (!natW || !natH) return;
@@ -1051,8 +1078,10 @@ function buildMapHotspotsForView(viewKey) {
                         const newLeftPct = ((centerX - containerRect.left) / containerRect.width) * 100 - newWidthPct / 2;
                         const newTopPct = ((centerY - containerRect.top) / containerRect.height) * 100 - newHeightPct / 2;
 
-                        btn.style.width = `${Math.max(0.5, newWidthPct)}%`;
-                        btn.style.height = `${Math.max(0.5, newHeightPct)}%`;
+                        // Never shrink hotspots to an unusably small size on tiny screens.
+                        // Keep a sensible minimum of ~5% so labels remain readable.
+                        btn.style.width = `${Math.max(5, newWidthPct)}%`;
+                        btn.style.height = `${Math.max(5, newHeightPct)}%`;
                         btn.style.left = `${Math.max(0, Math.min(100 - newWidthPct, newLeftPct))}%`;
                         btn.style.top = `${Math.max(0, Math.min(100 - newHeightPct, newTopPct))}%`;
                     }
