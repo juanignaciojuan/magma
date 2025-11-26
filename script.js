@@ -750,9 +750,10 @@ function buildGallery(roomId = null) {
         // Compute columns based on current viewport to match CSS breakpoints
         const computeCols = () => {
             const w = window.innerWidth;
-            if (w < 461) return 2; // small phones
-            if (w < 1242) return 4; // tablets / laptops
-            return 5; // desktop / wide
+            // Match CSS breakpoints: <=450 -> 2 cols; 451-1241 -> 4 cols; >=1242 ->5 cols
+            if (w <= 450) return 2;
+            if (w <= 1241) return 4;
+            return 5;
         };
 
         const cols = computeCols();
@@ -766,10 +767,14 @@ function buildGallery(roomId = null) {
             for (let i = 0; i < cards.length; i++) {
                 const c = cards[i];
                 c.style.gridColumnStart = (start + i).toString();
+                c.style.justifySelf = 'center';
             }
         } else {
             // Clear any previous overrides
-            cards.forEach(c => { c.style.removeProperty('grid-column-start'); });
+            cards.forEach(c => {
+                c.style.removeProperty('grid-column-start');
+                c.style.removeProperty('justify-self');
+            });
         }
     } catch (e) { /* ignore layout tuning failure */ }
 

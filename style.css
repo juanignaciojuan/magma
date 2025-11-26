@@ -981,7 +981,7 @@ body.view-start main > .view {
 
   /* Override tecnico label transform on mobile (per request) */
   .map-room[data-room-id="room-tecnico"] .map-room-label {
-    transform: translateY(-25px) !important;
+    transform: translateY(-10px) !important;
   }
 }
 
@@ -1165,6 +1165,90 @@ body.view-start main > .view {
   left: 6px;
   right: 6px;
   bottom: 6px;
+}
+
+/* Prevent map-room labels from wrapping and breaking words on most
+   viewports so labels remain single-line and respect the hotspot shape.
+   Extreme tiny devices (<=360px) allow wrapping and smaller font elsewhere. */
+.map-room .map-room-label,
+.map-room > span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+/* Tablet and desktop: prefer single-line labels with ellipsis to avoid
+   vertical wrapping inside hotspot buttons at mid and large widths. */
+@media (min-width: 451px) and (max-width: 1241px) {
+  .map-room .map-room-label,
+  .map-room > span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (min-width: 1242px) {
+  .map-room .map-room-label,
+  .map-room > span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* Landscape small phones: reduce label size and keep single-line truncation */
+/* Small phones: allow labels to overflow the hotspot area so the text
+   can occupy adjacent blank space in the PNG and avoid being cut off.
+   Also allow wrapping on very small widths so full names can be shown. */
+@media (max-width: 400px) {
+  .map-room {
+    overflow: visible !important;
+  }
+
+  .map-room .map-room-label,
+  .map-room > span {
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+    font-size: 10px !important;
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+    line-height: 1.05 !important;
+  }
+
+  /* Nudge patio sur lower so its label sits fully inside visible area */
+  .map-room[data-room-id="room-patio-sur"] .map-room-label {
+    transform: translateY(14px) !important;
+  }
+
+  /* Allow the room button to extend visually outside its box so text
+     can overlap adjacent transparent/blank PNG space. */
+  .map-room.has-img { overflow: visible !important; }
+}
+
+/* Landscape small phones: keep labels readable, allow overflow and wrapping */
+@media (max-width: 568px) and (orientation: landscape) {
+  .map-room {
+    overflow: visible !important;
+  }
+  .map-room .map-room-label,
+  .map-room > span {
+    font-size: 10px !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow: visible !important;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+    line-height: 1.05 !important;
+  }
+
+  .map-room[data-room-id="room-patio-sur"] .map-room-label {
+    transform: translateY(12px) !important;
+  }
 }
 
 /* Dev tuning helper: when `body` has `.dev-tune`, disable automatic
