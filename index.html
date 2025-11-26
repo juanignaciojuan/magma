@@ -129,6 +129,21 @@
         <button id="startBtn" class="start-btn">Entrar</button>
     </div>
 
+    <!-- Rotate-to-portrait overlay (shown on small-device landscape) -->
+    <div id="rotateOverlay" class="rotate-overlay" role="dialog" aria-hidden="true">
+        <div class="rotate-content" aria-hidden="true">
+            <!-- Simple rotate icon (SVG) -->
+            <svg class="rotate-icon" xmlns="http://www.w3.org/2000/svg" width="84" height="84" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 12a9 9 0 1 0-3.4 6.9"></path>
+                <polyline points="21 12 21 6 15 6"></polyline>
+            </svg>
+            <div class="rotate-text">
+                <strong>Girá el dispositivo</strong>
+                <div class="rotate-sub">Por favor girá el teléfono a vertical</div>
+            </div>
+        </div>
+    </div>
+
     <footer></footer>
 
     <script src="data.js"></script>

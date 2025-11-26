@@ -1256,3 +1256,53 @@ body.view-start main > .view {
    `imgArea` precisely without aspect-ratio constraints. Toggle from
    the console with `toggleDevTune()` (defined in script.js). */
 /* (dev tuning styles removed) */
+
+/* Rotate overlay styles: shown on mobile landscape to prompt portrait rotation */
+.rotate-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999; /* ensure overlay sits above header and all content */
+  pointer-events: auto;
+}
+.rotate-overlay[aria-hidden="false"], .rotate-overlay.visible {
+  display: flex;
+}
+.rotate-overlay .rotate-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,0.9);
+  padding: 18px 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+  color: #000;
+}
+.rotate-overlay .rotate-icon {
+  width: 64px;
+  height: 64px;
+  color: #222;
+}
+.rotate-overlay .rotate-text { text-align: center; font-family: 'Creato Display', sans-serif; }
+.rotate-overlay .rotate-text strong { display:block; font-size: 16px; }
+.rotate-overlay .rotate-text .rotate-sub { font-size: 13px; color:#444; }
+
+/* When overlay is visible, optionally dim page content slightly (particles remain visible) */
+body.show-rotate::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.06);
+  z-index: 99990; /* dim content but stay below the rotate overlay */
+  pointer-events: none;
+}
+
+/* Make sure overlay content is compact on very small widths */
+@media (max-width: 420px) {
+  .rotate-overlay .rotate-content { padding: 12px 14px; }
+  .rotate-overlay .rotate-icon { width: 54px; height: 54px; }
+  .rotate-overlay .rotate-text strong { font-size: 14px; }
+}

@@ -1236,6 +1236,51 @@ window.addEventListener('load', () => {
     setView('start', { pushHistory: false });
 });
 
+/* ---------- ORIENTATION / ROTATE OVERLAY ---------- */
+// Show an overlay prompting mobile users to rotate device to portrait
+const rotateOverlay = document.getElementById('rotateOverlay');
+function isSmallDeviceLandscape() {
+    // treat devices with width <= 900px as 'mobile/tablet' for this purpose
+    // and check orientation is landscape
+    try {
+        const mw = window.innerWidth || document.documentElement.clientWidth;
+        const mh = window.innerHeight || document.documentElement.clientHeight;
+        const isLandscape = mw > mh;
+        return isLandscape && mw <= 900;
+    } catch (e) { return false; }
+}
+
+let rotateDebounce = null;
+function checkRotateOverlay() {
+    if (rotateDebounce) clearTimeout(rotateDebounce);
+    rotateDebounce = setTimeout(() => {
+        const show = isSmallDeviceLandscape();
+        if (!rotateOverlay) return;
+        if (show) {
+            rotateOverlay.setAttribute('aria-hidden', 'false');
+            rotateOverlay.classList.add('visible');
+            document.body.classList.add('show-rotate');
+            // Lock certain behaviors while overlay is shown
+            document.body.classList.add('locked');
+            // Pause auto-scroll if running
+            try { stopAutoScroll(); } catch (_) {}
+        } else {
+            rotateOverlay.setAttribute('aria-hidden', 'true');
+            rotateOverlay.classList.remove('visible');
+            document.body.classList.remove('show-rotate');
+            document.body.classList.remove('locked');
+            // Resume auto-scroll only when appropriate
+            try { if (currentView === 'room' && CONFIG.autoScroll && CONFIG.autoScroll.enabled) startAutoScroll(); } catch (_) {}
+        }
+    }, 120);
+}
+
+// Listen for orientation changes and resize events
+window.addEventListener('orientationchange', checkRotateOverlay);
+window.addEventListener('resize', checkRotateOverlay);
+// Also check on load
+window.addEventListener('load', () => setTimeout(checkRotateOverlay, 200));
+
 /* ---------- SCHEDULE PAGE ---------- */
 function renderSchedule() {
     if (!scheduleContainer || typeof SCHEDULE_DATA === 'undefined') return;
