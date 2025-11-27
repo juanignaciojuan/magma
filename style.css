@@ -538,6 +538,18 @@ body:not(.view-subsueloMap) #subsueloMapPage {
   }
 }
 
+/* Very small devices: only reduce schedule font-size by ~2px; avoid using flex
+   or additional layout overrides so styling remains simple and predictable. */
+@media (max-width: 400px) {
+  /* Use calc against 1rem so the result is ~2px smaller than the root size.
+     This reduces all table text without adding layout/spacing overrides. */
+  .schedule-table,
+  .schedule-table th,
+  .schedule-table td {
+    font-size: calc(1rem - 2px);
+  }
+}
+
 .schedule-date {
   margin: 0 0 12px;
   font-size: 18px;
@@ -932,14 +944,14 @@ body.view-start main > .view {
 @media (max-width: 360px) {
   /* Reduce map-room label and button text to fit tiny widths */
   .map-room {
-    font-size: 9px !important;
+    font-size: 8px !important;
     padding: 6px 8px !important;
-    font-weight: 400;
+    font-weight: 200 !important;
   }
   .map-room .map-room-label,
   .map-room > span {
-    font-size: 8px !important;
-    font-weight: 400 !important;
+    font-size: 7px !important;
+    font-weight: 200 !important;
     white-space: normal;
     word-break: break-word;
     padding: 4px 6px;
@@ -976,7 +988,7 @@ body.view-start main > .view {
 
   /* Override tecnico label transform on mobile (per request) */
   .map-room[data-room-id="room-tecnico"] .map-room-label {
-    transform: translateY(-10px) !important;
+    transform: translateY(-12px) !important;
   }
 }
 
@@ -1091,20 +1103,22 @@ body[data-current-room="room-tecnico"] .grid.few-projects .card {
 
   /* Slightly reduce map label and room text on small phones */
   .map-room {
-    font-size: 12px;
+    font-size: 11px;
     padding: 8px 10px;
+    font-weight: 200;
   }
   .map-room .map-room-label,
   .map-room > span {
-    font-size: 8px;
+    font-size: 7px;
+    font-weight: 200;
   }
 }
 
 /* Slightly larger phones but still mobile: keep labels smaller than desktop */
 @media (min-width: 361px) and (max-width: 768px) {
   /* Reduce label font-size by 2px (was 11px) for this breakpoint */
-  .map-room { font-size: 11px; }
-  .map-room .map-room-label, .map-room > span { font-size: 9px; }
+  .map-room { font-size: 10px; font-weight: 200; }
+  .map-room .map-room-label, .map-room > span { font-size: 8px; font-weight: 200; }
   .site-title { font-size: 16px; }
   .ambient-toggle, .close-btn, .menu-btn, .map-choice-btn, .start-btn { padding: 9px 14px; font-size: 15px; }
   /* For few-projects on small tablets/phones, show 2 columns layout for readability */
@@ -1221,8 +1235,8 @@ body[data-current-room="room-tecnico"] .grid.few-projects .card {
   color: #000; /* default: black */
   z-index: 3;
   pointer-events: none;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 200;
   text-align: center;
 }
 
@@ -1242,8 +1256,8 @@ body[data-current-room="room-tecnico"] .grid.few-projects .card {
   justify-content: center;
   z-index: 3;
   pointer-events: none;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 200;
 }
 
 .map-room .room-map-img { box-sizing: border-box; }
@@ -1281,6 +1295,71 @@ body[data-current-room="room-tecnico"] .grid.few-projects .card {
   left: 6px;
   right: 6px;
   bottom: 6px;
+}
+
+/* Ensure image-backed hotspots allow their labels to overflow the button
+   area so long labels can sit over transparent PNG space instead of
+   being clipped by the button box. Use !important to override any
+   previous constraints set for small-view or fallback states. */
+.map-room.has-img {
+  overflow: visible !important;
+}
+.map-room.has-img .map-room-label,
+.map-room.has-img > span {
+  overflow: visible !important;
+  white-space: nowrap !important;
+  text-overflow: clip !important;
+  z-index: 999; /* keep labels on top of other map elements */
+  pointer-events: none; /* labels shouldn't intercept pointer events */
+}
+
+/* Desktop and large tablet tweak: reduce label size and allow overlap so
+   labels can use transparent PNG space without being clipped. This fixes
+   misaligned/misaligned labels when the page is not in full-screen.
+*/
+@media (min-width: 1024px) {
+  .map-room.has-img {
+    overflow: visible !important;
+  }
+  .map-room .map-room-label,
+  .map-room > span {
+    font-size: 12px; /* slightly smaller on desktop to avoid wrapping */
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: clip;
+    z-index: 6; /* lift above other elements */
+    font-weight: 200;
+  }
+}
+
+/* Rotate specified room labels vertically for screens narrower than 1600px.
+   This keeps the map layout readable and lets long labels use vertical
+   space without being clipped by hotspot boxes. Adjusts position to
+   center the rotated label inside its hotspot; per-room offsets can
+   still be applied via `labelOffset` in `ROOM_DEFINITIONS` if needed. */
+@media (max-width: 1599px) {
+  .map-room[data-room-id="room-tecnico"] .map-room-label,
+  .map-room[data-room-id="room-nomade"] .map-room-label,
+  .map-room[data-room-id="room-planetario"] .map-room-label,
+  .map-room[data-room-id="room-patio-sur"] .map-room-label,
+  .map-room[data-room-id="room-app"] .map-room-label {
+    left: 50% !important;
+    top: 50% !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: translate(-50%, -50%) rotate(-90deg) !important;
+    transform-origin: center center !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    padding: 0 6px !important;
+    z-index: 999 !important;
+    font-weight: 200 !important;
+  }
+
+  /* Nudge tecnico slightly up so its rotated label sits 2px higher */
+  .map-room[data-room-id="room-tecnico"] .map-room-label {
+    transform: translate(-50%, calc(-50% - 4px)) rotate(-90deg) !important;
+  }
 }
 
 /* Prevent map-room labels from wrapping and breaking words on most
@@ -1357,10 +1436,11 @@ body[data-current-room="room-tecnico"] .grid.few-projects .card {
     white-space: nowrap !important;
     word-break: normal !important;
     overflow: visible !important;
-    font-size: 10px !important;
+    font-size: 9px !important;
     padding-left: 4px !important;
     padding-right: 4px !important;
     line-height: 1.05 !important;
+    font-weight: 200 !important;
   }
 
   .map-room[data-room-id="room-patio-sur"] .map-room-label {
