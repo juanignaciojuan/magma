@@ -577,7 +577,7 @@ body:not(.view-subsueloMap) #subsueloMapPage {
   /* aspect ratio comes from parent card */
   display: block;
   object-fit: cover;
-  border-radius: 0;
+  border-radius: 12px;
   /* card provides rounding */
   /* Use map texture instead of flat black while image loads */
   background: black;
@@ -915,7 +915,7 @@ body.view-start main > .view {
   }
   .map-room .map-room-label,
   .map-room > span {
-    font-size: 9px !important;
+    font-size: 8px !important;
     font-weight: 400 !important;
     white-space: normal;
     word-break: break-word;
@@ -935,26 +935,116 @@ body.view-start main > .view {
      cards are large and consistent with medium-mobile appearance. */
   .grid {
     display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: repeat(1, 1fr) !important;
     gap: calc(var(--grid-gap) * 0.8) !important;
     padding: 8px !important;
     justify-items: center;
   }
   .grid .card {
     width: 100%;
-    max-width: calc(50% - (var(--grid-gap) * 0.5));
+    max-width: 92%;
     box-sizing: border-box;
   }
 
   /* If gallery is flagged .few-projects, it uses the same grid sizing
      but the JS will set grid-column-start to center the items. */
   .grid.few-projects { display: grid !important; grid-template-columns: repeat(2,1fr) !important; gap: calc(var(--grid-gap) * 0.8); }
-  .grid.few-projects .card { width: 100%; max-width: calc(50% - (var(--grid-gap) * 0.5)); }
+  .grid.few-projects .card { width: 100%; max-width: 92%; }
 
   /* Override tecnico label transform on mobile (per request) */
   .map-room[data-room-id="room-tecnico"] .map-room-label {
     transform: translateY(-10px) !important;
   }
+}
+
+/* Make map-room labels allowed to overlap their buttons globally */
+.map-room {
+  overflow: visible; /* allow labels/images to extend outside */
+}
+
+/* Ensure labels themselves do not wrap as flex children (prevent multi-line flex wrap) */
+.map-room .map-room-label {
+  flex-wrap: nowrap;
+  white-space: nowrap; /* enforce single line */
+  word-break: normal;
+}
+
+/* When rotate overlay is visible, block header interactions fully */
+body.show-rotate .site-header {
+  pointer-events: none !important;
+  user-select: none !important;
+}
+
+/* Per-room scaling: make cards for tecnico room larger at different breakpoints */
+/* Use the body data attribute `data-current-room` set by JS when entering a room */
+/* Replace transform-based scaling (which overlaps items) with layout rules
+   that increase card size via grid/flex sizing. This keeps cards square,
+   respects layout flow and avoids visual overlap. */
+@media (max-width: 360px) {
+  body[data-current-room="room-tecnico"] .grid {
+    grid-template-columns: repeat(1, 1fr);
+    justify-items: center;
+  }
+  body[data-current-room="room-tecnico"] .grid .card {
+    width: 92%;
+    max-width: 92%;
+    transform: none !important;
+    margin-bottom: 18px;
+    border-radius: 12px;
+  }
+
+  /* If gallery is using few-projects flex layout, override to a single-column
+     grid for tecnico so cards don't appear side-by-side on tiny phones. */
+  body[data-current-room="room-tecnico"] .grid.few-projects {
+    display: grid !important;
+    grid-template-columns: repeat(1, 1fr) !important;
+    gap: calc(var(--grid-gap) * 0.8) !important;
+    justify-items: center;
+  }
+  body[data-current-room="room-tecnico"] .grid.few-projects .card {
+    width: 92% !important;
+    max-width: 92% !important;
+    box-sizing: border-box !important;
+  }
+}
+
+@media (min-width: 361px) and (max-width: 450px) {
+  body[data-current-room="room-tecnico"] .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: calc(var(--grid-gap) * 0.9);
+  }
+  body[data-current-room="room-tecnico"] .grid .card {
+    width: calc(50% - (var(--grid-gap) * 0.5));
+    max-width: calc(50% - (var(--grid-gap) * 0.5));
+    transform: none !important;
+    margin-bottom: 18px;
+    border-radius: 12px;
+  }
+}
+
+@media (min-width: 451px) and (max-width: 768px) {
+  body[data-current-room="room-tecnico"] .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  body[data-current-room="room-tecnico"] .grid .card {
+    width: calc(50% - (var(--grid-gap) * 0.6));
+    max-width: calc(50% - (var(--grid-gap) * 0.6));
+    transform: none !important;
+    margin-bottom: 14px;
+    border-radius: 12px;
+  }
+}
+
+/* If the gallery is using the few-projects flex layout, make tecnico cards
+   take up roughly twice the area so they appear larger without transforms. */
+body[data-current-room="room-tecnico"] .grid.few-projects {
+  justify-content: center;
+}
+body[data-current-room="room-tecnico"] .grid.few-projects .card {
+  flex: 0 0 calc(50% - (var(--grid-gap) * 0.6));
+  max-width: calc(50% - (var(--grid-gap) * 0.6));
+  transform: none !important;
+  border-radius: 12px;
 }
 
 @media (max-width: 450px) {
@@ -983,14 +1073,15 @@ body.view-start main > .view {
   }
   .map-room .map-room-label,
   .map-room > span {
-    font-size: 12px;
+    font-size: 8px;
   }
 }
 
 /* Slightly larger phones but still mobile: keep labels smaller than desktop */
 @media (min-width: 361px) and (max-width: 768px) {
+  /* Reduce label font-size by 2px (was 11px) for this breakpoint */
   .map-room { font-size: 11px; }
-  .map-room .map-room-label, .map-room > span { font-size: 11px; }
+  .map-room .map-room-label, .map-room > span { font-size: 9px; }
   .site-title { font-size: 16px; }
   .ambient-toggle, .close-btn, .menu-btn, .map-choice-btn, .start-btn { padding: 9px 14px; font-size: 15px; }
   /* For few-projects on small tablets/phones, show 2 columns layout for readability */
@@ -1212,10 +1303,11 @@ body.view-start main > .view {
 
   .map-room .map-room-label,
   .map-room > span {
-    white-space: normal !important;
-    word-break: break-word !important;
-    overflow: visible !important;
-    text-overflow: unset !important;
+    /* keep label on a single line and avoid breaking letters */
+    white-space: nowrap !important;
+    word-break: normal !important;
+    overflow: visible !important; /* allow overflowing into blank PNG area */
+    text-overflow: ellipsis !important;
     font-size: 10px !important;
     padding-left: 6px !important;
     padding-right: 6px !important;
@@ -1239,10 +1331,10 @@ body.view-start main > .view {
   }
   .map-room .map-room-label,
   .map-room > span {
-    font-size: 10px !important;
-    white-space: normal !important;
-    word-break: break-word !important;
+    white-space: nowrap !important;
+    word-break: normal !important;
     overflow: visible !important;
+    font-size: 10px !important;
     padding-left: 4px !important;
     padding-right: 4px !important;
     line-height: 1.05 !important;

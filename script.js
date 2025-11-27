@@ -943,6 +943,13 @@ function setView(view, options = {}) {
     currentView = targetView;
     setBodyViewClass(targetView);
 
+    // If leaving a room view, clear the data attribute so per-room CSS doesn't remain active
+    try {
+        if (targetView !== 'room' && document && document.body && typeof document.body.removeAttribute === 'function') {
+            document.body.removeAttribute('data-current-room');
+        }
+    } catch (_) {}
+
     if (MAP_VIEW_KEYS.has(targetView)) {
         fitMapToViewport(targetView);
     }
@@ -1163,6 +1170,10 @@ function enterRoom(roomId) {
     const room = ROOM_LOOKUP[roomId];
     if (!room) return;
     currentRoomId = roomId;
+    // Expose the current room on <body> so CSS can target per-room rules
+    try {
+        if (document && document.body) document.body.dataset.currentRoom = roomId;
+    } catch (_) {}
     const projectCount = getRoomProjects(room).length;
     if (roomTitleEl) {
         const baseTitle = room.title || '';
@@ -1246,7 +1257,9 @@ function isSmallDeviceLandscape() {
         const mw = window.innerWidth || document.documentElement.clientWidth;
         const mh = window.innerHeight || document.documentElement.clientHeight;
         const isLandscape = mw > mh;
-        return isLandscape && mw <= 900;
+        // Only show for probable mobile/touch devices (avoid showing on desktop browser when resized)
+        const isTouch = (typeof window !== 'undefined') && (('ontouchstart' in window) || (window.matchMedia && window.matchMedia('(pointer: coarse)').matches));
+        return isLandscape && mw <= 900 && !!isTouch;
     } catch (e) { return false; }
 }
 
