@@ -145,7 +145,7 @@ const projects = [
     artist: "Azul Varela, Julian Novarro, Paula Bonsera, Camila Azevedo y Valentin Herman",
     desc: "Norma, la cuidadora de la casa del difunto Jochen Wenzel, te pide que la cuides mientras se ausenta. Al entrar, descubrís una habitación llena de acertijos creados especialmente para vos. Cada pista te da acceso a archivos audiovisuales que revelan la historia de esta familia",
     roomTag: "circo",
-    tags: ["multicanal","archivo", "interactivo"]
+    tags: ["multicanal", "archivo", "interactivo"]
   },
   {
     img: "img/circo_31.png",
@@ -198,7 +198,7 @@ const projects = [
     tags: ["ensayo", "cuerpo", "performance"]
   },
   {
-    img: "img/taller_43.png",
+    img: "img/taller_43.jpg",
     video: "video/video43.mp4",
     /*volume: 0.5,*/
     title: "Cuando Estaba",
@@ -387,7 +387,7 @@ const projects = [
     roomTag: "tapete",
     tags: ["instalación", "inmersivo", "ensayo"]
   },
-    {
+  {
     img: "img/tapete_20.png",
     video: "video/video20.mp4",
     /*volume: 0.5,*/
@@ -413,9 +413,9 @@ const projects = [
     /*volume: 0.1,*/
     title: "5 altares de tierra y luz",
     artist: "Astrid Lavalle",
-    desc: "PENDIENTE",
+    desc: "Altar piramidal de adobe, escalonado y hueco, que integra materiales rituales y extractivos de América Latina. Una estructura simbólica que cruza territorio, memoria y energía, y que se enciende ante el tacto del observador",
     roomTag: "tapete",
-    tags: ["PENDIENTE", "PENDIENTE", "PENDIENTE"]
+    tags: ["instalación", "no lineal", "escultura"]
   },
   {
     img: "img/tapete_23.png",
