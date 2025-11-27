@@ -454,7 +454,7 @@ const projects = [
     title: "Pasarotus",
     artist: "Federico Ricardi y Lautaro Baldoma",
     desc: "A través de la exploración del mapa y diálogos, el personaje va a ir desbloqueando habitaciones y descubriendo la historia del bar La Perla, la cuna del rock nacional argentino. Además, vamos a descubrir dónde se juntaban a tocar ciertos jóvenes rebeldes, que luego harían historia en la música",
-    roomTag: "cyber",
+    roomTag: "app",
     tags: ["videojuego", "música", "ensayo"]
   },
   {
@@ -464,7 +464,7 @@ const projects = [
     title: "La vuelta al perro",
     artist: "Julián Stoessel",
     desc: "Un joven del barrio de Once se despierta misteriosamente convertido en perro y debe descubrir la forma de volver a la normalidad",
-    roomTag: "cyber",
+    roomTag: "app",
     tags: ["videojuego", "animales", "loop"]
   },
   {
@@ -474,7 +474,7 @@ const projects = [
     title: "La Isla del Último Sol",
     artist: "Lucía Belén Vera, María Celeste Guardia Viacava y Ornella Luz Giorgio",
     desc: "Ponete en la piel de Nikki, un joven conejo en el frente de combate contra los zorros. Un día encuentra una tarotista que le profetiza una catástrofe, por lo que Nikki deberá encontrar la manera de escapar",
-    roomTag: "cyber",
+    roomTag: "app",
     tags: ["videojuego", "no lineal", "animales"]
   },
   {
@@ -484,7 +484,7 @@ const projects = [
     title: "minutodesilencio",
     artist: "Florencia Perez Duarte",
     desc: "Un minuto de silencio es una página web interactiva sobre el duelo y la memoria en la era digital. El usuario participa de un ritual simbólico de despedida, aludiendo a un minuto de silencio, donde podrá jugar e interactuar en un jardín 3D",
-    roomTag: "cyber",
+    roomTag: "app",
     tags: ["interfaz experimental", "ficción", "código web"]
   },
   {
@@ -494,7 +494,7 @@ const projects = [
     title: "Signal Flesh",
     artist: "Felipe Aguero, Valentina Amado Stoecklin, Miranda Ranne y Paloma Pisaco",
     desc: "Página web interactiva que traduce tu foto en código binario y luego a onda sonora",
-    roomTag: "cyber",
+    roomTag: "app",
     tags: ["interfaz experimental", "código web", "arte sonoro"]
   },
   {
@@ -504,7 +504,7 @@ const projects = [
     title: "Ángela",
     artist: "Camila Torres Rivadeneira Avalos",
     desc: "Videojuego ambientado en una escuela atravesada por la negligencia, donde las historias de reclamos son narradas por los fantasmas de sus propios estudiantes a través de la revista del C.E.B.A.A.P.",
-    roomTag: "cyber",
+    roomTag: "app",
     tags: ["ficción", "animación", "videojuego"]
   },
   {

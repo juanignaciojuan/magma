@@ -287,13 +287,13 @@ const ROOM_DEFINITIONS = [
     // `room-banos` removed per request; baños page deleted
     {
         id: 'room-app',
-        roomTag: 'cyber',
+        roomTag: 'app',
         views: ['plantaBajaMap'],
-        title: 'Cyber',
-        shortLabel: 'cyber',
+        title: 'App',
+        shortLabel: 'app',
         description: 'Animación, videojuegos y cruces con tecnología.',
         area: { top: '45.8%', left: '29.8%', width: '12%', height: '18%' },
-        img: 'img/cyber.png',
+        img: 'img/app-room.png',
         /*color: 'rgba(140, 0, 255, 0.7)',
         restColor: 'rgba(140, 0, 255, 0.2)',
         hoverColor: 'rgba(140, 0, 255, 0.46)',*/

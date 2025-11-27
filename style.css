@@ -903,35 +903,7 @@ body.view-start main > .view {
 
 /* MEDIA QUERIES: fixed column counts by device class */
 /* Phones (min resolution): 2 columns */
-@media (max-width: 450px) {
-  .grid {
-    grid-template-columns: repeat(var(--cols-mobile), 1fr);
-  }
 
-  :root {
-    --grid-gap: 10px;
-  }
-
-  .video-frame {
-    max-width: 80vw;
-  }
-
-  #player {
-    max-height: 60vh;
-  }
-
-  /* Replace header Mapa y Programación text with an icon on mobile */
-
-  /* Slightly reduce map label and room text on small phones */
-  .map-room {
-    font-size: 12px;
-    padding: 8px 10px;
-  }
-  .map-room .map-room-label,
-  .map-room > span {
-    font-size: 12px;
-  }
-}
 
 /* Extra small devices (e.g., very small phones like 300x600 or iPhone SE) */
 @media (max-width: 360px) {
@@ -982,6 +954,36 @@ body.view-start main > .view {
   /* Override tecnico label transform on mobile (per request) */
   .map-room[data-room-id="room-tecnico"] .map-room-label {
     transform: translateY(-10px) !important;
+  }
+}
+
+@media (max-width: 450px) {
+  .grid {
+    grid-template-columns: repeat(var(--cols-mobile), 1fr);
+  }
+
+  :root {
+    --grid-gap: 10px;
+  }
+
+  .video-frame {
+    max-width: 80vw;
+  }
+
+  #player {
+    max-height: 60vh;
+  }
+
+  /* Replace header Mapa y Programación text with an icon on mobile */
+
+  /* Slightly reduce map label and room text on small phones */
+  .map-room {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+  .map-room .map-room-label,
+  .map-room > span {
+    font-size: 12px;
   }
 }
 
