@@ -1301,42 +1301,72 @@ function renderSchedule() {
 
     const frag = document.createDocumentFragment();
 
-    SCHEDULE_DATA.forEach(day => {
+    SCHEDULE_DATA.forEach((day, dayIndex) => {
         const dayEl = document.createElement('div');
         dayEl.className = 'schedule-day';
 
         const dateEl = document.createElement('h3');
         dateEl.className = 'schedule-date';
-        dateEl.textContent = day.date;
+        dateEl.textContent = `Día ${dayIndex + 1} - ${day.date}`;
         dayEl.appendChild(dateEl);
 
-        const listEl = document.createElement('ul');
-        listEl.className = 'schedule-list';
+        // Create a responsive table. For narrow viewports the 3rd/4th columns
+        // will be hidden via CSS and the space/block will be shown inside
+        // the meta area under the title.
+        const table = document.createElement('table');
+        table.className = 'schedule-table';
+
+        const thead = document.createElement('thead');
+        const headRow = document.createElement('tr');
+        ['Hora', 'Título', 'Espacio'].forEach(h => {
+            const th = document.createElement('th');
+            th.textContent = h;
+            headRow.appendChild(th);
+        });
+        thead.appendChild(headRow);
+        table.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
 
         day.events.forEach(event => {
-            const itemEl = document.createElement('li');
-            itemEl.className = 'schedule-item';
+            const tr = document.createElement('tr');
+            tr.className = 'schedule-row';
 
-            const timeEl = document.createElement('span');
-            timeEl.className = 'schedule-time';
-            timeEl.textContent = event.time;
-            itemEl.appendChild(timeEl);
+            const tdTime = document.createElement('td');
+            tdTime.className = 'schedule-time';
+            tdTime.textContent = event.time || '';
+            tr.appendChild(tdTime);
 
-            const titleEl = document.createElement('span');
-            titleEl.className = 'schedule-title';
-            titleEl.textContent = event.title;
-            itemEl.appendChild(titleEl);
+            // Title cell contains the title and a hidden meta area with space/block
+            const tdTitle = document.createElement('td');
+            tdTitle.className = 'schedule-title-cell';
+            const titleMain = document.createElement('div');
+            titleMain.className = 'schedule-title-main';
+            titleMain.textContent = event.title || '';
+            tdTitle.appendChild(titleMain);
 
+            // Parse description into space (format: "SPACE — BLOCK").
+            // We no longer show the space under the title; space will appear
+            // only in the dedicated column to the right.
+            let spaceText = '';
             if (event.description) {
-                const descEl = document.createElement('p');
-                descEl.className = 'schedule-description';
-                descEl.textContent = event.description;
-                itemEl.appendChild(descEl);
+                const parts = event.description.split('—').map(s => s.trim());
+                spaceText = parts[0] || '';
             }
-            listEl.appendChild(itemEl);
+
+            tr.appendChild(tdTitle);
+
+            // Separate columns for wider layouts
+            const tdSpace = document.createElement('td');
+            tdSpace.className = 'schedule-space-col';
+            tdSpace.textContent = spaceText;
+            tr.appendChild(tdSpace);
+
+            tbody.appendChild(tr);
         });
 
-        dayEl.appendChild(listEl);
+        table.appendChild(tbody);
+        dayEl.appendChild(table);
         frag.appendChild(dayEl);
     });
 

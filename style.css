@@ -510,9 +510,32 @@ body:not(.view-subsueloMap) #subsueloMapPage {
 }
 
 .schedule-day {
-  background: rgba(0, 0, 0, 0.03);
+  background: #fff;
   border-radius: 12px;
   padding: 16px 20px;
+}
+
+/* Center schedule table and make it adapt to device width */
+.schedule-table {
+  width: min(900px, 100%);
+  margin: 0 auto;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.schedule-table th,
+.schedule-table td {
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+/* On very narrow viewports keep table fluid but centered */
+@media (max-width: 420px) {
+  .schedule-table {
+    width: 100%;
+    margin: 0 auto;
+  }
 }
 
 .schedule-date {
