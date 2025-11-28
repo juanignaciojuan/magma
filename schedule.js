@@ -6,13 +6,13 @@
    Both listed dates will receive the same events/times as requested. */
 const SOURCE_SCHEDULE = {
   dates: [
-    'Jueves 27 de Noviembre',
+    /*'Jueves 27 de Noviembre',*/
     'Viernes 28 de Noviembre'
   ],
   programming: {
     spaces: [
       {
-        space: 'AUDITORIO',
+        space: 'NÓMADE',
         blocks: [
           { block: 'BLOQUE 1', time: '20:00', titles: [ 'La patria duerme en la basura', 'Cañáreda', 'Sol de noche', 'Desyugo', 'Las muchachas' ] },
           { block: 'BLOQUE 2', time: '21:00', titles: [ 'La Flandes', 'Sálvese quien crea', 'Culo de Botella', 'Arrabal', 'Honkey Tonk', 'Villars', 'Madreselva' ] },
@@ -22,7 +22,7 @@ const SOURCE_SCHEDULE = {
         ]
       },
       {
-        space: 'PATIO',
+        space: 'PATIO SUR',
         blocks: [
           { block: 'BLOQUE 1', time: '20:00', titles: [ 'Las dimensiones conocidas', 'Ecosenterventanas', 'Opereta andamios', 'Tu águila guerrera' ] },
           { block: 'BLOQUE 2', time: '20:30', titles: [ 'Las visitas de Camilo', 'Peligro de derrumbe', 'Ni una sola flor' ] },

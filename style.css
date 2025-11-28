@@ -215,6 +215,21 @@ main {
   font-family: 'Creato Display', sans-serif;
 }
 
+/* Header icon sizing: keep icon proportional to other header buttons */
+.header-icon {
+  display: block;
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.header-right .ambient-toggle .header-icon,
+.header-left .ambient-toggle .header-icon {
+  /* slightly smaller on very small screens */
+  width: 18px;
+  height: 18px;
+}
+
 .ambient-toggle:disabled {
   opacity: 0.45;
   cursor: default;

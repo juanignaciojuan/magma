@@ -1301,18 +1301,14 @@ function renderSchedule() {
 
     const frag = document.createDocumentFragment();
 
-    SCHEDULE_DATA.forEach((day, dayIndex) => {
+    // Render only the second day (index 1) if available; otherwise render the first day.
+    const indexToShow = (Array.isArray(SCHEDULE_DATA) && SCHEDULE_DATA.length > 1) ? 1 : 0;
+    const day = SCHEDULE_DATA[indexToShow];
+    if (day) {
         const dayEl = document.createElement('div');
         dayEl.className = 'schedule-day';
 
-        const dateEl = document.createElement('h3');
-        dateEl.className = 'schedule-date';
-        dateEl.textContent = `Día ${dayIndex + 1} - ${day.date}`;
-        dayEl.appendChild(dateEl);
-
-        // Create a responsive table. For narrow viewports the 3rd/4th columns
-        // will be hidden via CSS and the space/block will be shown inside
-        // the meta area under the title.
+        // Intentionally omit the date heading per request; show only the playlist/table
         const table = document.createElement('table');
         table.className = 'schedule-table';
 
@@ -1328,7 +1324,7 @@ function renderSchedule() {
 
         const tbody = document.createElement('tbody');
 
-        day.events.forEach(event => {
+        (Array.isArray(day.events) ? day.events : []).forEach(event => {
             const tr = document.createElement('tr');
             tr.className = 'schedule-row';
 
@@ -1337,26 +1333,19 @@ function renderSchedule() {
             tdTime.textContent = event.time || '';
             tr.appendChild(tdTime);
 
-            // Title cell contains the title and a hidden meta area with space/block
             const tdTitle = document.createElement('td');
             tdTitle.className = 'schedule-title-cell';
             const titleMain = document.createElement('div');
             titleMain.className = 'schedule-title-main';
             titleMain.textContent = event.title || '';
             tdTitle.appendChild(titleMain);
+            tr.appendChild(tdTitle);
 
-            // Parse description into space (format: "SPACE — BLOCK").
-            // We no longer show the space under the title; space will appear
-            // only in the dedicated column to the right.
             let spaceText = '';
             if (event.description) {
                 const parts = event.description.split('—').map(s => s.trim());
                 spaceText = parts[0] || '';
             }
-
-            tr.appendChild(tdTitle);
-
-            // Separate columns for wider layouts
             const tdSpace = document.createElement('td');
             tdSpace.className = 'schedule-space-col';
             tdSpace.textContent = spaceText;
@@ -1368,7 +1357,7 @@ function renderSchedule() {
         table.appendChild(tbody);
         dayEl.appendChild(table);
         frag.appendChild(dayEl);
-    });
+    }
 
     scheduleContainer.appendChild(frag);
 }
