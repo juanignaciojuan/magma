@@ -22,7 +22,7 @@ const SOURCE_SCHEDULE = {
         ]
       },
       {
-        space: 'PATIO SUR',
+        space: 'PATIO',
         blocks: [
           { block: 'BLOQUE 1', time: '20:00', titles: [ 'Las dimensiones conocidas', 'Ecosenterventanas', 'Opereta andamios', 'Tu águila guerrera' ] },
           { block: 'BLOQUE 2', time: '20:30', titles: [ 'Las visitas de Camilo', 'Peligro de derrumbe', 'Ni una sola flor' ] },
