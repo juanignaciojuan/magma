@@ -43,7 +43,6 @@ const MAP_VIEW_CONFIG = {
 };
 const MAP_VIEW_KEYS = new Set(Object.keys(MAP_VIEW_CONFIG));
 const roomTitleEl = document.getElementById('roomTitle');
-const roomDescriptionEl = document.getElementById('roomDescription');
 const roomEmptyMessage = document.getElementById('roomEmptyMessage');
 let currentView = 'start';
 let currentRoomId = null;
@@ -1181,11 +1180,7 @@ function enterRoom(roomId) {
             ? `${baseTitle} · ${projectCount} proyecto${projectCount === 1 ? '' : 's'}`
             : `${baseTitle} · sin proyectos todavía`;
     }
-    if (roomDescriptionEl) {
-        const desc = room.description || '';
-        roomDescriptionEl.textContent = desc;
-        roomDescriptionEl.classList.toggle('is-hidden', !desc);
-    }
+    // roomDescription element removed — descriptions are no longer shown in the room header
     buildGallery(roomId);
     setView('room');
 }
