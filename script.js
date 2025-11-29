@@ -1176,9 +1176,8 @@ function enterRoom(roomId) {
     const projectCount = getRoomProjects(room).length;
     if (roomTitleEl) {
         const baseTitle = room.title || '';
-        roomTitleEl.textContent = projectCount
-            ? `${baseTitle} · ${projectCount} proyecto${projectCount === 1 ? '' : 's'}`
-            : `${baseTitle} · sin proyectos todavía`;
+        // Show only the room name (no project counts)
+        roomTitleEl.textContent = baseTitle;
     }
     // roomDescription element removed — descriptions are no longer shown in the room header
     buildGallery(roomId);
