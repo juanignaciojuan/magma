@@ -1543,3 +1543,41 @@ body.show-rotate::before {
   .rotate-overlay .rotate-icon { width: 54px; height: 54px; }
   .rotate-overlay .rotate-text strong { font-size: 14px; }
 }
+
+/* Small-phone layout: ensure video and info frames fit within viewport
+   by capping player height and allowing the modal to scroll internally
+   only when necessary. These conservative values keep controls visible.
+*/
+@media (max-width: 480px) {
+  .video-frame {
+    max-width: 94vw;
+    max-height: calc(100vh - 88px);
+    overflow: auto; /* allow internal scroll if content still exceeds */
+  }
+
+  /* The embedded player should take a reasonable fraction of the
+     viewport; reduce on small phones so description fits below it. */
+  #player {
+    max-height: 44vh !important;
+    width: 100% !important;
+  }
+
+  /* Limit video info area so the combined height stays within viewport */
+  .video-info {
+    max-height: calc(100vh - 88px - 44vh);
+    overflow: auto;
+  }
+
+  /* Info modal (credits) should also fit: cap its frame and allow scroll */
+  .info-frame {
+    max-height: calc(100vh - 68px);
+    overflow: auto;
+  }
+}
+
+/* Extra-small phones: tighten player further to avoid overflow on short screens */
+@media (max-width: 360px) {
+  #player { max-height: 36vh !important; }
+  .video-frame { max-height: calc(100vh - 80px); }
+  .video-info { max-height: calc(100vh - 80px - 36vh); }
+}
