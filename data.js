@@ -18,8 +18,8 @@
 
 const projects = [
   {
-    img: "img/cyber_5.png",
-    video: "video/video_cyber5.mp4",
+    img: "img/colectivo_5.png",
+    video: "video/video47.mp4",
     /*volume: 0.5,*/
     title: "Signal flesh",
     artist: "Felipe Aguero, Valentina Amado Stoecklin, Miranda Ranne y Paloma Pisaco",
@@ -86,6 +86,16 @@ const projects = [
     desc: "Los dispositivos de vigilancia nos rodean, y hemos hecho de ellos un elemento más de nuestra cotidianeidad. Nos preguntamos entonces; ¿en qué momento realmente estamos en libertad si nos sabemos siempre observados? ¿hemos encontrado comodidad viviendo ante estos ojos?",
     roomTag: "colectivo",
     tags: ["instalación", "control", "sensores"]
+  },
+  {
+    img: "img/colectivo_19.png",
+    video: "video/video19.mp4",
+    /*volume: 0.1,*/
+    title: "Habitar",
+    artist: "Florencia Moreno y Lola Quinteros",
+    desc: "Habitar el dolor, habitar lo que no fue dado, habitar la falta. La obra propone registrar cómo el cuerpo habita un dolor emocional, las reacciones físicas y cómo los objetos conservan lo no dicho. Un archivo del dolor donde permanecer junto a eso que duele se vuelve también una forma de transformación",
+    roomTag: "colectivo",
+    tags: ["instalación", "inmersivo", "ensayo"]
   },
   {
     img: "img/planetario_3.png",
@@ -348,13 +358,13 @@ const projects = [
     tags: ["instalación", "ficción", "archivo"]
   },
   {
-    img: "img/tatrajo_16.png",
+    img: "img/tratajo_16.png",
     video: "video/video16.mp4",
     /*volume: 0.5,*/
     title: "Candilejas",
     artist: "Facundo Torga",
     desc: "Video-performance que ejecuta los mecanismos de la industria del espectáculo, el costo de la fama, y la presencia del artista en escena. La obra es interpretada por Normie Jean, una estrella en decadencia en el pico de su juventud",
-    roomTag: "tatrajo",
+    roomTag: "tratajo",
     tags: ["performance", "videoarte", "queerness"]
   },
   {
@@ -376,16 +386,6 @@ const projects = [
     desc: "Obra cinética que indaga la relación entre lo orgánico y lo artificial a través del movimiento de cables que se tensan en un ritmo constante. El concepto se inspira en la plasticidad fenotípica, entendida como la capacidad de un organismo para modificar su forma en función del entorno",
     roomTag: "tapete",
     tags: ["instalación", "ficción", "escultura"]
-  },
-  {
-    img: "img/tapete_19.png",
-    video: "video/video19.mp4",
-    /*volume: 0.1,*/
-    title: "Habitar",
-    artist: "Florencia Moreno y Lola Quinteros",
-    desc: "Habitar el dolor, habitar lo que no fue dado, habitar la falta. La obra propone registrar cómo el cuerpo habita un dolor emocional, las reacciones físicas y cómo los objetos conservan lo no dicho. Un archivo del dolor donde permanecer junto a eso que duele se vuelve también una forma de transformación",
-    roomTag: "tapete",
-    tags: ["instalación", "inmersivo", "ensayo"]
   },
   {
     img: "img/tapete_20.png",
@@ -488,16 +488,6 @@ const projects = [
     tags: ["interfaz experimental", "ficción", "código web"]
   },
   {
-    img: "img/cyber_5.png",
-    video: "video/video_cyber5.mp4",
-    volume: 0.1,
-    title: "Signal Flesh",
-    artist: "Felipe Aguero, Valentina Amado Stoecklin, Miranda Ranne y Paloma Pisaco",
-    desc: "Página web interactiva que traduce tu foto en código binario y luego a onda sonora",
-    roomTag: "app",
-    tags: ["interfaz experimental", "código web", "arte sonoro"]
-  },
-  {
     img: "img/cyber_6.png",
     video: "video/video_cyber6.mp4",
     /*volume: 0.5,*/
@@ -508,7 +498,7 @@ const projects = [
     tags: ["ficción", "animación", "videojuego"]
   },
   {
-    img: "img/sonato_44.png",
+    img: "img/sotano_44.png",
     video: "video/video44.mp4",
     /*volume: 0.5,*/
     title: "Canal Magdalena",
@@ -529,7 +519,7 @@ const projects = [
   },
   {
     img: "img/sotano_46.jpg",
-    video: "video/video1.mp4",
+    video: "video/video46.mp4",
     /*volume: 0.5,*/
     title: "Respirar con dificultad",
     artist: "Sofía Gramajo, Sofía Pérez, Leila Ríos, Gabriela Pardo Rojas y Mariana Urquiza",

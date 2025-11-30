@@ -1,6 +1,6 @@
 /* ---------- DOM ELEMENTS ---------- */
 const startBtn = document.getElementById('startBtn');
-const toggleAmbient = document.getElementById('toggleAmbient');
+const infoBtn = document.getElementById('infoBtn');
 const videoModal = document.getElementById('videoModal');
 const player = document.getElementById('player');
 const closeVideo = document.getElementById('closeVideo');
@@ -64,7 +64,7 @@ const closeInfoBtn = document.getElementById('closeInfo');
 /* ---------- AUDIO ---------- */
 // Global volumes you can tweak (see also CSS variables for card sizes)
 const SETTINGS = {
-    ambientVol: 0.4,  // ambient soundtrack default volume when ON
+    ambientVol: 0.1,  // ambient soundtrack default volume when ON
     hoverVol: 0.5,    // UI hover sound volume
     clickVol: 0.5,    // UI click sound volume
     videoVol: 0.2     // default video volume if a clip doesn't specify one
@@ -129,11 +129,7 @@ function fadeAmbient(toVol, duration = 600) {
     }, 30);
 }
 
-toggleAmbient.addEventListener('click', () => {
-    playSound(clickSound);
-    fadeAmbient(ambientOn ? 0 : SETTINGS.ambientVol, 600);
-    ambientOn = !ambientOn;
-});
+// ambient toggle removed (button deleted). Ambient audio remains available programmatically.
 
 function playSound(sound) {
     ensureAudioContext();
@@ -154,7 +150,6 @@ startBtn.addEventListener('click', () => {
     ensureAudioContext();
     // User must opt-in to audio
     ambientOn = false;
-    toggleAmbient.textContent = '♫';
     hideStartOverlay();
 });
 
@@ -337,14 +332,14 @@ const ROOM_DEFINITIONS = [
         hoverColor: 'rgba(80, 200, 0, 0.42)',*/
     },
     {
-        id: 'room-tatrajo',
-        roomTag: 'tatrajo',
+        id: 'room-tratajo',
+        roomTag: 'tratajo',
         views: ['plantaBajaMap'],
-        title: 'Tatrajo',
-        shortLabel: 'tatrajo',
+        title: 'Tratajo',
+        shortLabel: 'tratajo',
         description: 'Acciones performáticas y piezas centradas en el sonido.',
         area: { top: '7%', left: '37.8%', width: '29%', height: '19%' },
-        img: 'img/tatrajo.png',
+        img: 'img/tratajo.png',
         labelOffset: { transform: 'translateY(20px)'},
         /*color: 'rgba(60, 0, 20, 0.7)',
         restColor: 'rgba(60, 0, 20, 0.18)',
@@ -994,8 +989,19 @@ function buildMapHotspotsForView(viewKey) {
     const container = config.hotspots;
     container.innerHTML = '';
     getRoomsForView(viewKey).forEach(room => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
+        // For `room-patio-sur` on the planta baja map we want to keep the
+        // visual appearance but remove the interactive button behavior.
+        const isStaticPatioSur = (room.id === 'room-patio-sur' && viewKey === 'plantaBajaMap');
+        let btn;
+        if (isStaticPatioSur) {
+            btn = document.createElement('div');
+            // keep styling via `.map-room` but do not make it focusable or interactive
+            btn.setAttribute('role', 'img');
+            btn.setAttribute('aria-hidden', 'true');
+        } else {
+            btn = document.createElement('button');
+            btn.type = 'button';
+        }
         btn.className = 'map-room';
         btn.dataset.roomId = room.id;
         btn.style.setProperty('--room-color', room.color || 'rgba(0, 230, 255, 0.7)');
@@ -1137,23 +1143,26 @@ function buildMapHotspotsForView(viewKey) {
         btn.title = descriptive;
         btn.setAttribute('aria-label', descriptive);
 
-        btn.addEventListener('pointerenter', (ev) => {
-            if (ev.pointerType === 'mouse') playSound(hoverSound);
-        }, { passive: true });
-        btn.addEventListener('click', () => {
-            playSound(clickSound);
-            // If the room defines a special destination, follow it.
-            if (room.linkTo === 'schedule') {
-                setView('schedule');
-                return;
-            }
-            if (room.linkTo === 'chooseMap') {
-                setView('chooseMap');
-                return;
-            }
-            // Default behavior: enter the room (show gallery)
-            enterRoom(room.id);
-        });
+        // Only attach interactive behaviors for actual buttons; skip for static patio-sur
+        if (!isStaticPatioSur) {
+            btn.addEventListener('pointerenter', (ev) => {
+                if (ev.pointerType === 'mouse') playSound(hoverSound);
+            }, { passive: true });
+            btn.addEventListener('click', () => {
+                playSound(clickSound);
+                // If the room defines a special destination, follow it.
+                if (room.linkTo === 'schedule') {
+                    setView('schedule');
+                    return;
+                }
+                if (room.linkTo === 'chooseMap') {
+                    setView('chooseMap');
+                    return;
+                }
+                // Default behavior: enter the room (show gallery)
+                enterRoom(room.id);
+            });
+        }
 
         container.appendChild(btn);
     });
@@ -1201,6 +1210,11 @@ if (backToMenuBtn) backToMenuBtn.addEventListener('click', () => {
     viewHistory.length = 0;
     currentRoomId = null;
     setView('menu', { pushHistory: false });
+});
+
+// Open the info modal when user clicks the info button (if present)
+if (infoBtn) infoBtn.addEventListener('click', () => {
+    openInfo();
 });
 
 if (goToMapBtn) goToMapBtn.addEventListener('click', () => {
@@ -1391,7 +1405,8 @@ function openVideo(card) {
         const t = document.createElement('span');
         t.className = 'tag';
         t.textContent = tag;
-        t.onclick = (e) => { e.stopPropagation(); openTag(tag, currentRoomId); };
+        // Allow browsing tags across all rooms: do not scope by currentRoomId.
+        t.onclick = (e) => { e.stopPropagation(); openTag(tag); };
         tagContainer.appendChild(t);
     });
 
