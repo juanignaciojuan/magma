@@ -1118,7 +1118,7 @@ body.view-start main > .view {
      if the card shifts. */
   #closeInfo {
     position: fixed;
-    bottom: 28px;
+    bottom: 44px;
     left: 50%;
     transform: translateX(-50%);
     width: 38px;
@@ -1670,7 +1670,7 @@ body.show-rotate::before {
      design). Fixed positioning ensures consistent placement. */
   #closeInfo {
     position: fixed;
-    bottom: 28px;
+    bottom: 44px;
     left: 50%;
     transform: translateX(-50%);
     width: 40px;
