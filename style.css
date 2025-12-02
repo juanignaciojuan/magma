@@ -1113,8 +1113,22 @@ body.view-start main > .view {
   .info-frame .info-columns { flex-direction: column; gap: 6px; }
   .info-frame .info-column { padding-right: 0; min-width: 0; }
 
-  /* Keep close action visible inside top-right of the card */
-  #closeInfo { position: absolute; top: 8px; right: 8px; bottom: auto; left: auto; }
+  /* Keep the close button centered near the bottom of the viewport on
+     short viewports. Use fixed positioning so it remains visible even
+     if the card shifts. */
+  #closeInfo {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 38px;
+    height: 38px;
+    z-index: 320;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+  }
 }
 
 /* Make map-room labels allowed to overlap their buttons globally */
@@ -1626,14 +1640,15 @@ body.show-rotate::before {
   .info-frame h3 { margin: 0 0 6px 0; font-size: 18px; }
   .info-frame p { margin: 0 0 10px 0; font-size: 15px; line-height: 1.38; }
 
-  /* Put the info modal nearer the top on phones so it doesn't overflow
-     and ensure the close button is visible. This overrides the desktop
-     padding-top (25vh) which is too large for short viewports. */
+  /* Let the info modal center vertically when it fits, and scale down
+     when it doesn't. Avoid snapping to the top by keeping the overlay's
+     alignment centered; cap the frame height so it adapts to the
+     viewport without deforming its vertical proportions. */
   #infoModal {
-    align-items: flex-start;
-    padding-top: 6vh; /* small gap from top */
-    padding-bottom: 6vh;
-    justify-content: flex-start;
+    align-items: center;
+    padding-top: 4vh;
+    padding-bottom: 4vh;
+    justify-content: center;
   }
 
   .info-frame {
@@ -1642,18 +1657,29 @@ body.show-rotate::before {
     box-sizing: border-box;
     padding: 12px 12px 76px; /* keep space for the close button area if needed */
     border-radius: 10px;
+    /* Cap the height to the viewport and allow the frame to be centered
+       by the flex container. Add a small transition so layout changes
+       don't snap abruptly when the device rotates or viewport resizes. */
+    max-height: calc(100vh - 56px);
+    overflow: auto;
+    transition: transform 240ms ease, margin 240ms ease, max-height 240ms ease;
   }
 
-  /* Move the close button inside the top-right of the card on phones */
+  /* Keep the close button centered near the bottom of the viewport on
+     small phones (mirror the circular centered button in the reference
+     design). Fixed positioning ensures consistent placement. */
   #closeInfo {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    bottom: auto;
-    left: auto;
-    transform: none;
-    width: 36px;
-    height: 36px;
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 40px;
+    z-index: 320;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
   }
 }
 
