@@ -1378,13 +1378,92 @@ function openInfo() {
     playSound(clickSound);
     if (infoModal && !infoModal.classList.contains('open')) infoModal.classList.add('open');
     scheduleInactivity();
+    // Position the close button so it sits below the info frame.
+    try { positionInfoCloseButton(); } catch (_) {}
 }
 function closeInfo() {
     playSound(clickSound);
     if (infoModal) infoModal.classList.remove('open');
+    // Clear any inline positioning applied to the close button and
+    // restore the overlay alignment to its CSS default.
+    try {
+        if (closeInfoBtn) {
+            closeInfoBtn.style.position = '';
+            closeInfoBtn.style.top = '';
+            closeInfoBtn.style.left = '';
+            closeInfoBtn.style.transform = '';
+        }
+        if (infoModal) {
+            infoModal.style.alignItems = '';
+            infoModal.style.paddingTop = '';
+        }
+    } catch (_) {}
 }
 if (closeInfoBtn) closeInfoBtn.addEventListener('click', closeInfo);
 if (infoModal) infoModal.addEventListener('click', (e) => { if (e.target === infoModal) closeInfo(); });
+
+// Dynamic positioning for the info-close button so it always sits
+// visually underneath the info card (centered horizontally).
+function positionInfoCloseButton() {
+    if (!infoModal || !closeInfoBtn) return;
+    if (!infoModal.classList.contains('open')) return;
+    const frame = infoModal.querySelector('.info-frame');
+    if (!frame) return;
+
+    // Ensure layout measurements are current
+    const rect = frame.getBoundingClientRect();
+    const btnH = closeInfoBtn.offsetHeight || 40;
+    const margin = 12; // space between frame bottom and button
+
+    const desiredTop = rect.bottom + margin;
+    const fitsBelow = (desiredTop + btnH + margin) <= window.innerHeight;
+
+    if (fitsBelow) {
+        // Center horizontally below the frame
+        closeInfoBtn.style.position = 'fixed';
+        closeInfoBtn.style.top = `${Math.round(desiredTop)}px`;
+        const centerX = Math.round(rect.left + rect.width / 2);
+        closeInfoBtn.style.left = `${centerX}px`;
+        closeInfoBtn.style.transform = 'translateX(-50%)';
+        // Keep overlay centered (no forced top alignment)
+        infoModal.style.alignItems = '';
+        infoModal.style.paddingTop = '';
+    } else {
+        // Not enough room below: gently move the overlay up by switching
+        // it to flex-start alignment and apply a small top padding so the
+        // frame lifts and the button can sit beneath it. Recompute after layout.
+        infoModal.style.alignItems = 'flex-start';
+        infoModal.style.paddingTop = '6vh';
+        // Clear prior inline button top & left so recompute uses new layout
+        closeInfoBtn.style.position = '';
+        closeInfoBtn.style.top = '';
+        closeInfoBtn.style.left = '';
+        closeInfoBtn.style.transform = '';
+        // Re-run after the layout settles
+        setTimeout(() => {
+            try { positionInfoCloseButton(); } catch (_) {}
+        }, 80);
+    }
+}
+
+// Keep the button positioned when viewport changes or frame resizes
+window.addEventListener('resize', () => { try { positionInfoCloseButton(); } catch (_) {} });
+window.addEventListener('orientationchange', () => { try { positionInfoCloseButton(); } catch (_) {} });
+
+// Observe the info frame for size changes (images/fonts) and reposition
+let _infoFrameResizeObserver = null;
+function ensureInfoFrameObserver() {
+    if (_infoFrameResizeObserver || !window.ResizeObserver) return;
+    try {
+        _infoFrameResizeObserver = new ResizeObserver(() => {
+            try { positionInfoCloseButton(); } catch (_) {}
+        });
+        const frame = infoModal ? infoModal.querySelector('.info-frame') : null;
+        if (frame) _infoFrameResizeObserver.observe(frame);
+    } catch (_) { _infoFrameResizeObserver = null; }
+}
+// Start observer when modal opens
+if (infoBtn) infoBtn.addEventListener('click', () => { setTimeout(ensureInfoFrameObserver, 120); });
 
 /* ---------- VIDEO MODAL ---------- */
 function openVideo(card) {
