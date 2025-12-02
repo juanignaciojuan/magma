@@ -1568,11 +1568,29 @@ body.show-rotate::before {
     overflow: auto;
   }
 
-  /* Info modal (credits) should also fit: cap its frame and allow scroll */
+  /* Info modal (credits) should fit entirely on small phones without
+     internal scroll. Stack the two columns, reduce padding and type
+     so the content compresses to the viewport height. */
   .info-frame {
     max-height: calc(100vh - 68px);
-    overflow: auto;
+    overflow: visible; /* avoid internal scroll */
+    display: flex;
+    flex-direction: column;
+    padding: 14px 12px;
+    gap: 8px;
   }
+
+  .info-frame .info-columns {
+    display: flex;
+    flex-direction: column; /* stack columns vertically on phones */
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .info-frame .info-column { padding-right: 0; }
+
+  .info-frame h3 { margin: 0 0 6px 0; font-size: 18px; }
+  .info-frame p { margin: 0 0 10px 0; font-size: 15px; line-height: 1.38; }
 }
 
 /* Extra-small phones: tighten player further to avoid overflow on short screens */
