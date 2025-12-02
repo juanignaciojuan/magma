@@ -129,14 +129,16 @@ body {
 }
 
 #juan-gonzalez,
-.info-frame a[href*="chela.agenda"] {
+.info-frame a[href*="chela.agenda"], #juana-tenembaum {
   color: black; /* visible on idle */
   text-decoration: none; /* no underline by default */
   display: inline-block;
   transition: background-color 160ms ease, color 160ms ease;
-  padding: 2px 8px; /* keep padding constant to avoid movement on hover */
+  /*padding: 2px 8px; /* keep padding constant to avoid movement on hover */
   border-radius: 0; /* square corners */
   box-sizing: border-box;
+  font-weight: 500;
+  font-style: italic;
 }
 
 /* Credit link should be plain inline text in the credits column — remove button-like padding */
@@ -1083,6 +1085,38 @@ body.view-start main > .view {
   }
 }
 
+/* Short viewports: ensure info modal fits when the available height is small
+   (e.g. mobile devices with height < 800px). Pin the modal toward the top,
+   reduce vertical spacing and slightly reduce text so the whole card can
+   be visible without the page itself scrolling. */
+@media (max-height: 800px) {
+  /* ensure the overlay aligns to the top area so the card is visible */
+  #infoModal { align-items: flex-start; padding-top: 4vh; padding-bottom: 4vh; }
+
+  .info-frame {
+    width: min(680px, 94vw);
+    max-width: 94vw;
+    /* cap height to viewport minus small margins so the frame itself
+       always sits fully inside the screen */
+    max-height: calc(100vh - 32px);
+    box-sizing: border-box;
+    padding: 10px 12px 64px;
+    overflow: auto; /* allow internal scroll only when absolutely needed */
+    margin: 6px auto;
+  }
+
+  /* Slightly reduce heading and body sizes to help fit content */
+  .info-frame h2 { font-size: 20px; margin-bottom: 6px; }
+  .info-frame p { font-size: 14px; line-height: 1.36; }
+
+  /* Stack columns and keep them compact */
+  .info-frame .info-columns { flex-direction: column; gap: 6px; }
+  .info-frame .info-column { padding-right: 0; min-width: 0; }
+
+  /* Keep close action visible inside top-right of the card */
+  #closeInfo { position: absolute; top: 8px; right: 8px; bottom: auto; left: auto; }
+}
+
 /* Make map-room labels allowed to overlap their buttons globally */
 .map-room {
   overflow: visible; /* allow labels/images to extend outside */
@@ -1591,6 +1625,36 @@ body.show-rotate::before {
 
   .info-frame h3 { margin: 0 0 6px 0; font-size: 18px; }
   .info-frame p { margin: 0 0 10px 0; font-size: 15px; line-height: 1.38; }
+
+  /* Put the info modal nearer the top on phones so it doesn't overflow
+     and ensure the close button is visible. This overrides the desktop
+     padding-top (25vh) which is too large for short viewports. */
+  #infoModal {
+    align-items: flex-start;
+    padding-top: 6vh; /* small gap from top */
+    padding-bottom: 6vh;
+    justify-content: flex-start;
+  }
+
+  .info-frame {
+    width: min(680px, 94vw);
+    max-width: 94vw;
+    box-sizing: border-box;
+    padding: 12px 12px 76px; /* keep space for the close button area if needed */
+    border-radius: 10px;
+  }
+
+  /* Move the close button inside the top-right of the card on phones */
+  #closeInfo {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    bottom: auto;
+    left: auto;
+    transform: none;
+    width: 36px;
+    height: 36px;
+  }
 }
 
 /* Extra-small phones: tighten player further to avoid overflow on short screens */
